@@ -8,6 +8,7 @@ import { Gifting } from "@/components/home/Gifting";
 import { Campaign } from "@/components/home/Campaign";
 import { WhyCheshire } from "@/components/home/WhyCheshire";
 import { WornByYou } from "@/components/home/WornByYou";
+import { PinterestBoard } from "@/components/home/PinterestBoard";
 import { StylistTeaser } from "@/components/home/StylistTeaser";
 import { getBestsellers, getNewDrops } from "@/lib/catalog";
 
@@ -36,6 +37,7 @@ export default function HomePage() {
       <CheshireEdit />
       <Bestsellers products={bestsellers} />
       <ShopByMood />
+      <PinterestBoard limit={8} />
       <Gifting />
       <Campaign />
       <WhyCheshire />

@@ -30,7 +30,7 @@ export const nav = {
     { label: "NEW IN", href: "/shop?sort=newest" },
     { label: "BESTSELLERS", href: "/shop?sort=bestselling" },
     { label: "COLLECTIONS", href: "/collections" },
-    { label: "JEWELLERY", href: "/shop" },
+    { label: "INSPIRATION", href: "/inspiration" },
     { label: "GIFTS", href: "/gifts" },
     { label: "ABOUT", href: "/about" },
   ],
