@@ -19,3 +19,4 @@ apps/mobile/ios
 .vscode
 uploads
 tmp
+.env*

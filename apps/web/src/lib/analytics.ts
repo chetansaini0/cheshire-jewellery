@@ -6,6 +6,7 @@ declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
     fbq?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
   }
 }
 
@@ -28,34 +29,33 @@ export function AnalyticsScripts() {
       s.async = true;
       s.src = `https://www.googletagmanager.com/gtag/js?id=${ga}`;
       document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
       window.gtag = function gtag(...args: unknown[]) {
-        (window as unknown as { dataLayer: unknown[] }).dataLayer =
-          (window as unknown as { dataLayer: unknown[] }).dataLayer || [];
-        (window as unknown as { dataLayer: unknown[] }).dataLayer.push(args);
+        window.dataLayer?.push(args);
       };
       window.gtag("js", new Date());
       window.gtag("config", ga);
     }
+
     if (pixel) {
-      // Meta Pixel bootstrap — load only when ID present
-      /* eslint-disable */
-      !(function (f: any, b, e, v) {
-        if (f.fbq) return;
-        const n: any = (f.fbq = function () {
-          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-        });
-        if (!f._fbq) f._fbq = n;
-        n.push = n;
-        n.loaded = true;
-        n.version = "2.0";
-        n.queue = [];
-        const t = b.createElement(e);
+      if (!window.fbq) {
+        const n = function (...args: unknown[]) {
+          const fn = n as typeof n & {
+            callMethod?: (...a: unknown[]) => void;
+            queue: unknown[];
+          };
+          if (fn.callMethod) fn.callMethod(...args);
+          else fn.queue.push(args);
+        };
+        (n as typeof n & { queue: unknown[]; loaded: boolean; version: string }).queue = [];
+        (n as typeof n & { loaded: boolean }).loaded = true;
+        (n as typeof n & { version: string }).version = "2.0";
+        window.fbq = n as Window["fbq"];
+        const t = document.createElement("script");
         t.async = true;
-        t.src = v;
-        const s = b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t, s);
-      })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
-      /* eslint-enable */
+        t.src = "https://connect.facebook.net/en_US/fbevents.js";
+        document.head.appendChild(t);
+      }
       window.fbq?.("init", pixel);
       window.fbq?.("track", "PageView");
     }
