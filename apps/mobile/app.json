@@ -1,0 +1,51 @@
+{
+  "name": "CHESHIRE",
+  "slug": "cheshire",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "icon": "./assets/icon.png",
+  "scheme": "cheshire",
+  "userInterfaceStyle": "light",
+  "splash": {
+    "image": "./assets/splash.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#F7F5F0"
+  },
+  "ios": {
+    "supportsTablet": true,
+    "bundleIdentifier": "com.cheshire.jewellery",
+    "associatedDomains": ["applinks:cheshire.com", "applinks:www.cheshire.com"]
+  },
+  "android": {
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/adaptive-icon.png",
+      "backgroundColor": "#F7F5F0"
+    },
+    "package": "com.cheshire.jewellery",
+    "intentFilters": [
+      {
+        "action": "VIEW",
+        "autoVerify": true,
+        "data": [
+          {
+            "scheme": "https",
+            "host": "cheshire.com",
+            "pathPrefix": "/products"
+          },
+          {
+            "scheme": "https",
+            "host": "www.cheshire.com",
+            "pathPrefix": "/products"
+          }
+        ],
+        "category": ["BROWSABLE", "DEFAULT"]
+      }
+    ]
+  },
+  "plugins": ["expo-router", "expo-notifications"],
+  "extra": {
+    "eas": {
+      "projectId": "replace-with-eas-project-id"
+    }
+  }
+}

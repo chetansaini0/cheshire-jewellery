@@ -1,0 +1,34 @@
+{
+  "name": "cheshire",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CHESHIRE — contemporary aesthetic jewellery commerce ecosystem",
+  "workspaces": [
+    "apps/web",
+    "apps/admin",
+    "apps/api",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@cheshire/web",
+    "dev:web": "npm run dev --workspace=@cheshire/web",
+    "dev:admin": "npm run dev --workspace=@cheshire/admin",
+    "dev:api": "npm run dev --workspace=@cheshire/api",
+    "dev:mobile": "npm run start --prefix apps/mobile",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=@cheshire/web",
+    "build:admin": "npm run build --workspace=@cheshire/admin",
+    "build:api": "npm run build --workspace=@cheshire/api",
+    "db:generate": "npm run generate --workspace=@cheshire/database",
+    "db:push": "npm run push --workspace=@cheshire/database",
+    "db:seed": "npm run seed --workspace=@cheshire/database",
+    "db:studio": "npm run studio --workspace=@cheshire/database",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "CHESHIRE",
+  "license": "UNLICENSED"
+}
