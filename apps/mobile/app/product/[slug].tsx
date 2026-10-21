@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { seedProducts, productImage } from "@cheshire/database/catalog";
+import { seedProducts, productImage } from "@cheshire/database";
 import { formatINR } from "@cheshire/utils";
 
 export default function ProductScreen() {

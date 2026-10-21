@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
-import { seedProducts, productImage } from "@cheshire/database/catalog";
+import { seedProducts, productImage } from "@cheshire/database";
 import { formatINR } from "@cheshire/utils";
 
 export default function ShopScreen() {

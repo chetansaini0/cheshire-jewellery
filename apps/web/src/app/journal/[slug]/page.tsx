@@ -1,17 +1,17 @@
 import { notFound } from "next/navigation";
 
 const posts: Record<string, { title: string; body: string }> = {
-  "how-to-style-silver-jewellery": {
-    title: "How to Style Silver Jewellery",
-    body: "Start with one signature chain. Add a fine layer. Finish with a single statement earring or ring. Keep metals consistent unless you’re intentionally contrasting finishes.",
+  "how-to-style-baggy-jeans": {
+    title: "How to Style Baggy Jeans",
+    body: "Balance the volume: a fitted or cropped top over wide denim, then a chunky sneaker to anchor the leg. Tuck the front, cuff once, and let the hem break naturally.",
   },
-  "5-jewellery-pieces-everyone-needs": {
-    title: "5 Jewellery Pieces Everyone Needs",
-    body: "Signature chain, everyday hoops, stack ring, cuff, and one bold pendant. Build from these and edit seasonally.",
+  "5-wardrobe-pieces-everyone-needs": {
+    title: "5 Wardrobe Pieces Everyone Needs",
+    body: "A heavyweight white tee, a grey hoodie, straight raw denim, a camel trench and one bold sneaker. Build from these and add a drop each season.",
   },
-  "best-jewellery-gifts-under-2000": {
-    title: "Best Jewellery Gifts Under ₹2000",
-    body: "Look for finish quality, wearability, and packaging — not just price. Hoops, fine chains, and minimal studs are safe, elevated picks.",
+  "best-clothing-gifts-under-2000": {
+    title: "Best Clothing Gifts Under ₹2000",
+    body: "Look for finish quality, wearability, and packaging — not just price. Washed caps, essential tee packs and crew sweatshirts are safe, elevated picks.",
   },
 };
 

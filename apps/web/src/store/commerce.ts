@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Product } from "@cheshire/types";
 import { FREE_SHIPPING_THRESHOLD, calcShipping } from "@cheshire/utils";
+import { isAffiliateProduct, partitionCartItems } from "@cheshire/commerce";
 
 export type LocalCartItem = {
   id: string;
@@ -114,12 +115,14 @@ export function useCartTotals() {
   const cart = useCommerceStore((s) => s.cart);
   const couponCode = useCommerceStore((s) => s.couponCode);
   const couponDiscount = useCommerceStore((s) => s.couponDiscount);
-  const subtotal = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);
+  const partition = partitionCartItems(cart);
+  const fulfillable = cart.filter((i) => !isAffiliateProduct(i.product));
+  const subtotal = fulfillable.reduce((s, i) => s + i.product.price * i.quantity, 0);
   const shipping =
     couponCode === "FREESHIP" ? 0 : calcShipping(subtotal, FREE_SHIPPING_THRESHOLD);
   const discount = couponDiscount;
   const total = Math.max(0, subtotal - discount + shipping);
   const amountToFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const count = cart.reduce((s, i) => s + i.quantity, 0);
-  return { subtotal, shipping, discount, total, amountToFreeShipping, count };
+  return { subtotal, shipping, discount, total, amountToFreeShipping, count, partition };
 }

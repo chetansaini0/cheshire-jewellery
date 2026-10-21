@@ -9,8 +9,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
   const title = category.charAt(0).toUpperCase() + category.slice(1);
   return {
-    title: `${title} | CHESHIRE Jewellery`,
-    description: `Shop ${title.toLowerCase()} from CHESHIRE — contemporary aesthetic jewellery.`,
+    title: `${title} | CHESHIRE`,
+    description: `Shop ${title.toLowerCase()} from CHESHIRE — streetwear and clothing.`,
   };
 }
 

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  getComplementary,
-  getProductBySlug,
-  youMayAlsoLike,
-  catalog,
-} from "@/lib/catalog";
+import { getComplementary, youMayAlsoLike, catalog } from "@/lib/catalog";
+import { getStorefrontProduct } from "@/lib/server-catalog";
 import { ProductDetailClient } from "./ProductDetailClient";
+import { breadcrumbJsonLd, organizationJsonLd, productJsonLd, productSeo } from "@cheshire/commerce";
+import { seoDefaults } from "@cheshire/config";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -16,45 +14,32 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = getStorefrontProduct(slug);
   if (!product) return { title: "Product" };
+  const seo = productSeo(product, process.env.NEXT_PUBLIC_SITE_URL || seoDefaults.siteUrl);
   return {
-    title: product.seoTitle || product.name,
-    description: product.seoDescription || product.shortDescription,
-    openGraph: {
-      title: product.name,
-      description: product.shortDescription,
-      images: [{ url: product.images[0]?.url }],
-    },
+    title: seo.title,
+    description: seo.description,
+    alternates: { canonical: seo.canonical },
+    openGraph: seo.openGraph,
   };
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = getStorefrontProduct(slug);
   if (!product) notFound();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: product.description,
-    sku: product.sku,
-    image: product.images.map((i) => i.url),
-    brand: { "@type": "Brand", name: "CHESHIRE" },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "INR",
-      price: product.price,
-      availability:
-        product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount,
-    },
-  };
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || seoDefaults.siteUrl;
+  const jsonLd = [
+    productJsonLd(product, siteUrl),
+    organizationJsonLd(siteUrl),
+    breadcrumbJsonLd([
+      { name: "Shop", url: `${siteUrl}/shop` },
+      { name: product.category, url: `${siteUrl}/shop/${product.category}` },
+      { name: product.name, url: `${siteUrl}/products/${product.slug}` },
+    ]),
+  ];
 
   return (
     <>

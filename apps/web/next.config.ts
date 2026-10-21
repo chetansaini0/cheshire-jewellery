@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
     "@cheshire/types",
     "@cheshire/api-client",
     "@cheshire/database",
+    "@cheshire/commerce",
+    "@cheshire/integrations",
   ],
 };
 

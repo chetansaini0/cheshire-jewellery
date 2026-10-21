@@ -10,9 +10,9 @@
     "lint": "expo lint"
   },
   "dependencies": {
-    "@cheshire/config": "*",
-    "@cheshire/database": "*",
-    "@cheshire/utils": "*",
+    "@cheshire/config": "file:../../packages/config",
+    "@cheshire/database": "file:../../packages/database",
+    "@cheshire/utils": "file:../../packages/utils",
     "expo": "~52.0.28",
     "expo-constants": "~17.0.5",
     "expo-linking": "~7.0.5",

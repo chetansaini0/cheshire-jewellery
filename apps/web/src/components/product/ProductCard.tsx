@@ -6,6 +6,7 @@ import type { Product } from "@cheshire/types";
 import { formatINR, getHoverImage, getPrimaryImage } from "@cheshire/utils";
 import { useCommerceStore } from "@/store/commerce";
 import { useUI } from "@/components/providers/UIProvider";
+import { formatProductLabel } from "@/lib/catalog";
 
 export function ProductCard({ product }: { product: Product }) {
   const addToCart = useCommerceStore((s) => s.addToCart);
@@ -14,10 +15,18 @@ export function ProductCard({ product }: { product: Product }) {
   const { setCartOpen } = useUI();
   const primary = getPrimaryImage(product);
   const hover = getHoverImage(product);
+  const affiliate = product.productType === "affiliate";
+  const label = formatProductLabel(product.label || product.badge);
+  const quickSizes = product.sizes.length > 1 ? product.sizes.slice(0, 5) : [];
+
+  const quickAdd = (size?: string) => {
+    addToCart(product, 1, size);
+    setCartOpen(true);
+  };
 
   return (
-    <article className="group relative" data-cursor="expand">
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe7df]">
+    <article className="group relative">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-line">
         <Link href={`/products/${product.slug}`} className="block h-full w-full">
           <Image
             src={primary}
@@ -32,14 +41,14 @@ export function ProductCard({ product }: { product: Product }) {
               alt=""
               fill
               sizes="(max-width:768px) 50vw, 25vw"
-              className="object-cover opacity-0 transition duration-700 ease-luxe group-hover:opacity-100"
+              className="object-cover opacity-0 transition duration-500 group-hover:opacity-100"
             />
           ) : null}
         </Link>
 
-        {product.badge ? (
-          <span className="absolute left-3 top-3 border border-ink bg-ivory/90 px-2 py-1 text-[9px] tracking-[0.18em] uppercase">
-            {product.badge}
+        {label ? (
+          <span className="absolute left-2 top-2 rounded-full bg-gold px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-ink">
+            {label}
           </span>
         ) : null}
 
@@ -47,38 +56,53 @@ export function ProductCard({ product }: { product: Product }) {
           type="button"
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           onClick={() => toggleWishlist(product.id)}
-          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center border border-ink/20 bg-ivory/90 text-sm transition hover:border-ink"
+          className={`absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-ivory/90 text-sm text-ink transition hover:bg-ivory ${
+            wishlisted ? "text-sale" : ""
+          }`}
         >
           {wishlisted ? "♥" : "♡"}
         </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            addToCart(product);
-            setCartOpen(true);
-          }}
-          className="absolute inset-x-3 bottom-3 translate-y-2 bg-ink py-3 text-[10px] tracking-[0.18em] uppercase text-ivory opacity-0 transition duration-500 ease-luxe group-hover:translate-y-0 group-hover:opacity-100 focus:translate-y-0 focus:opacity-100"
-          data-cursor="shop"
-        >
-          Quick Add
-        </button>
+        <div className="absolute inset-x-2 bottom-2 translate-y-3 rounded-lg bg-ivory/95 p-2 opacity-0 backdrop-blur transition duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          {affiliate ? (
+            <Link href={`/products/${product.slug}`} className="block py-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-ink">
+              View item
+            </Link>
+          ) : quickSizes.length ? (
+            <div>
+              <p className="text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-muted">Quick add</p>
+              <div className="mt-1.5 flex justify-center gap-1">
+                {quickSizes.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => quickAdd(s)}
+                    className="min-w-8 rounded-md border border-ink/15 px-1.5 py-1 text-[10px] font-semibold text-ink transition hover:bg-ink hover:text-ivory"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <button type="button" onClick={() => quickAdd(product.sizes[0])} className="w-full py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink">
+              Quick add
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="mt-3 space-y-1">
-        <Link href={`/products/${product.slug}`} className="block text-sm tracking-wide">
-          {product.name}
-        </Link>
-        <p className="text-xs text-muted">
-          {product.rating.toFixed(1)} · {product.reviewCount} reviews
-        </p>
-        <div className="flex items-baseline gap-2 text-sm">
-          <span>{formatINR(product.price)}</span>
+      <div className="mt-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <Link href={`/products/${product.slug}`} className="block truncate text-[13px] font-semibold uppercase tracking-wide">
+            {product.name}
+          </Link>
+          <p className="mt-0.5 truncate text-xs text-muted">{product.color}</p>
+        </div>
+        <div className="shrink-0 text-right text-[13px]">
+          <p className="font-semibold">{formatINR(product.price)}</p>
           {product.mrp > product.price ? (
-            <>
-              <span className="text-muted line-through">{formatINR(product.mrp)}</span>
-              <span className="text-sale text-xs">{product.discountPercent}% off</span>
-            </>
+            <p className="text-xs text-muted line-through">{formatINR(product.mrp)}</p>
           ) : null}
         </div>
       </div>

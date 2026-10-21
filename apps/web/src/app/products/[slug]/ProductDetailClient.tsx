@@ -8,6 +8,9 @@ import { formatINR, getPrimaryImage } from "@cheshire/utils";
 import { ProductCard } from "@/components/product/ProductCard";
 import { useCommerceStore } from "@/store/commerce";
 import { useUI } from "@/components/providers/UIProvider";
+import { catalog, formatProductLabel } from "@/lib/catalog";
+import { TrustBadges } from "@/components/product/TrustBadges";
+import { isAffiliateProduct } from "@cheshire/commerce";
 
 export function ProductDetailClient({
   product,
@@ -18,9 +21,12 @@ export function ProductDetailClient({
   pairWith: Product[];
   alsoLike: Product[];
 }) {
-  const [size, setSize] = useState(product.sizes[0] || "One Size");
+  const [size, setSize] = useState<string | null>(product.sizes.length === 1 ? product.sizes[0] : null);
+  const [sizeError, setSizeError] = useState(false);
   const [active, setActive] = useState(0);
   const [openAcc, setOpenAcc] = useState<string | null>("DESCRIPTION");
+  const [zoomed, setZoomed] = useState(false);
+  const [buyingPartner, setBuyingPartner] = useState(false);
   const addToCart = useCommerceStore((s) => s.addToCart);
   const toggleWishlist = useCommerceStore((s) => s.toggleWishlist);
   const wishlisted = useCommerceStore((s) => s.wishlistIds.includes(product.id));
@@ -33,10 +39,30 @@ export function ProductDetailClient({
   }, [product.id, trackView]);
 
   const images = product.images;
+  const affiliate = isAffiliateProduct(product);
+  const outOfStock = product.stock <= 0 || product.availability === "out_of_stock";
+  const recentProducts = recentlyViewed
+    .filter((id) => id !== product.id)
+    .map((id) => catalog.find((p) => p.id === id))
+    .filter((p): p is Product => Boolean(p))
+    .slice(0, 4);
+
+  async function buyFromPartner() {
+    setBuyingPartner(true);
+    try {
+      const res = await fetch(`/api/affiliate/go/${product.slug}`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || "Partner link unavailable");
+      window.location.assign(data.url);
+    } catch {
+      setBuyingPartner(false);
+    }
+  }
+
   const sections = [
     { id: "DESCRIPTION", body: product.description },
-    { id: "MATERIAL", body: product.material },
-    { id: "DIMENSIONS", body: product.dimensions || "See size chart" },
+    { id: "FABRIC", body: `${product.material} · Colour: ${product.color}` },
+    { id: "SIZE & FIT", body: product.dimensions || "True to size. Size up for an oversized fit. Model is 6'1\" and wears M." },
     { id: "CARE", body: product.care || "" },
     { id: "SHIPPING", body: product.shippingInfo || "" },
     { id: "RETURNS", body: product.returnsInfo || "" },
@@ -47,15 +73,21 @@ export function ProductDetailClient({
     <div className="mx-auto max-w-site px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
-          <div className="relative aspect-[4/5] overflow-hidden bg-[#ebe7df]">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-line">
             <Image
               src={images[active]?.url || getPrimaryImage(product)}
               alt={product.name}
               fill
               priority
-              className="object-cover"
+              className={`object-cover transition duration-700 ease-luxe ${zoomed ? "scale-125 cursor-zoom-out" : "cursor-zoom-in"}`}
               sizes="(max-width:1024px) 100vw, 50vw"
+              onClick={() => setZoomed((z) => !z)}
             />
+            {product.videoUrl && active === 0 ? (
+              <span className="absolute bottom-3 left-3 border border-gold bg-ivory/95 px-2 py-1 text-[9px] tracking-[0.16em] uppercase text-gold-deep">
+                Film
+              </span>
+            ) : null}
           </div>
           <div className="mt-3 grid grid-cols-4 gap-2">
             {images.map((img, i) => (
@@ -63,7 +95,7 @@ export function ProductDetailClient({
                 key={img.id}
                 type="button"
                 onClick={() => setActive(i)}
-                className={`relative aspect-square overflow-hidden border ${
+                className={`relative aspect-[3/4] overflow-hidden rounded-lg border-2 ${
                   active === i ? "border-ink" : "border-transparent"
                 }`}
               >
@@ -74,15 +106,17 @@ export function ProductDetailClient({
         </div>
 
         <div className="lg:sticky lg:top-28 lg:self-start">
-          {product.badge ? (
-            <p className="text-[11px] tracking-[0.18em] uppercase text-muted">{product.badge}</p>
+          {formatProductLabel(product.label || product.badge) ? (
+            <p className="text-[11px] tracking-[0.18em] uppercase text-muted">
+              {formatProductLabel(product.label || product.badge)}
+            </p>
           ) : null}
-          <h1 className="mt-2 font-serif text-4xl md:text-5xl">{product.name}</h1>
+          <h1 className="mt-2 font-serif text-5xl uppercase leading-[0.9] md:text-6xl">{product.name}</h1>
           <p className="mt-3 text-sm text-muted">
             {product.rating.toFixed(1)} · {product.reviewCount} reviews
           </p>
           <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-xl">{formatINR(product.price)}</span>
+            <span className="text-2xl font-semibold">{formatINR(product.price)}</span>
             {product.mrp > product.price ? (
               <>
                 <span className="text-muted line-through">{formatINR(product.mrp)}</span>
@@ -91,48 +125,95 @@ export function ProductDetailClient({
             ) : null}
           </div>
           <p className="mt-2 text-sm text-muted">
-            {product.stock > 0 ? "In stock — ships in 24–48 hrs" : "Currently unavailable"}
+            {outOfStock
+              ? "Currently unavailable"
+              : product.estimatedDelivery || "In stock — ships in 24–48 hrs"}
           </p>
+          {product.material ? (
+            <p className="mt-2 text-sm text-muted">{product.material} · {product.color}</p>
+          ) : null}
 
           <div className="mt-8">
-            <p className="text-[11px] tracking-[0.16em] uppercase">Size</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em]">
+                Size{size ? `: ${size}` : ""}
+              </p>
+              <Link href="/policies/size-guide" className="text-xs text-muted underline">Size guide</Link>
+            </div>
+            <div className="mt-3 grid grid-cols-5 gap-2">
               {product.sizes.map((s) => (
                 <button
                   key={s}
                   type="button"
-                  onClick={() => setSize(s)}
-                  className={`min-w-12 border px-3 py-2 text-sm ${
-                    size === s ? "border-ink bg-ink text-ivory" : "border-line"
-                  }`}
+                  onClick={() => {
+                    setSize(s);
+                    setSizeError(false);
+                  }}
+                  aria-pressed={size === s}
+                  className={`rounded-lg border py-3 text-sm font-semibold transition ${
+                    size === s ? "border-ink bg-ink text-ivory" : "border-line hover:border-ink"
+                  } ${product.sizes.length === 1 ? "col-span-5" : ""}`}
                 >
                   {s}
                 </button>
               ))}
             </div>
+            {sizeError ? <p className="mt-2 text-xs font-semibold text-sale">Pick a size first.</p> : null}
           </div>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              className="bg-ink py-4 text-[11px] tracking-[0.18em] uppercase text-ivory"
-              data-cursor="shop"
-              onClick={() => {
-                addToCart(product, 1, size);
-                setCartOpen(true);
-              }}
-            >
-              Add to Cart
-            </button>
-            <Link
-              href="/checkout"
-              onClick={() => addToCart(product, 1, size)}
-              className="border border-ink py-4 text-center text-[11px] tracking-[0.18em] uppercase"
-              data-cursor="shop"
-            >
-              Buy Now
-            </Link>
+            {affiliate ? (
+              <button
+                type="button"
+                className="rounded-full bg-ink py-4 text-[11px] font-semibold tracking-[0.18em] uppercase text-ivory hover:bg-ink/85 sm:col-span-2 disabled:opacity-50"
+                data-cursor="shop"
+                disabled={outOfStock || buyingPartner}
+                onClick={() => void buyFromPartner()}
+              >
+                {buyingPartner ? "Opening partner…" : "Buy from Partner"}
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="rounded-full bg-ink py-4 text-[11px] font-semibold tracking-[0.18em] uppercase text-ivory hover:bg-ink/85 disabled:opacity-50"
+                  data-cursor="shop"
+                  disabled={outOfStock}
+                  onClick={() => {
+                    if (!size) return setSizeError(true);
+                    addToCart(product, 1, size);
+                    setCartOpen(true);
+                  }}
+                >
+                  Add to Bag
+                </button>
+                <Link
+                  href="/checkout"
+                  onClick={(e) => {
+                    if (!size) {
+                      e.preventDefault();
+                      setSizeError(true);
+                      return;
+                    }
+                    addToCart(product, 1, size);
+                  }}
+                  className="rounded-full border border-ink py-4 text-center text-[11px] font-semibold tracking-[0.18em] uppercase hover:bg-gold"
+                  data-cursor="shop"
+                >
+                  Buy Now
+                </Link>
+              </>
+            )}
           </div>
+          {affiliate ? (
+            <p className="mt-3 text-xs leading-relaxed text-muted">
+              This item is sold by a partner label. You complete purchase on their site. See our{" "}
+              <Link href="/policies/affiliate-disclosure" className="underline">
+                affiliate disclosure
+              </Link>
+              .
+            </p>
+          ) : null}
           <button
             type="button"
             onClick={() => toggleWishlist(product.id)}
@@ -140,6 +221,12 @@ export function ProductDetailClient({
           >
             {wishlisted ? "Saved to wishlist" : "Add to wishlist"}
           </button>
+
+          <ul className="mt-8 grid grid-cols-3 gap-3 text-center text-[10px] tracking-[0.12em] uppercase text-muted">
+            <li className="rounded-lg border border-line px-2 py-3">Secure checkout</li>
+            <li className="rounded-lg border border-line px-2 py-3">Easy returns</li>
+            <li className="rounded-lg border border-line px-2 py-3">Free size swap</li>
+          </ul>
 
           <div className="mt-10 divide-y divide-line border-y border-line">
             {sections.map((s) => (
@@ -159,11 +246,12 @@ export function ProductDetailClient({
               </div>
             ))}
           </div>
+          <TrustBadges />
         </div>
       </div>
 
       <section className="mt-20">
-        <h2 className="font-serif text-3xl md:text-4xl">Pair it with</h2>
+        <h2 className="section-title">Complete the fit</h2>
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {pairWith.map((p) => (
             <ProductCard key={p.id} product={p} />
@@ -172,7 +260,7 @@ export function ProductDetailClient({
       </section>
 
       <section className="mt-16">
-        <h2 className="font-serif text-3xl md:text-4xl">You may also like</h2>
+        <h2 className="font-serif text-4xl uppercase md:text-5xl">You may also like</h2>
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {alsoLike.map((p) => (
             <ProductCard key={p.id} product={p} />
@@ -180,25 +268,43 @@ export function ProductDetailClient({
         </div>
       </section>
 
-      {recentlyViewed.length > 1 ? (
+      {recentProducts.length ? (
         <section className="mt-16">
-          <h2 className="font-serif text-3xl md:text-4xl">Recently viewed</h2>
-          <p className="mt-2 text-sm text-muted">Synced locally — cloud sync via account API.</p>
+          <h2 className="font-serif text-4xl uppercase md:text-5xl">Recently viewed</h2>
+          <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+            {recentProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
         </section>
       ) : null}
 
-      {/* Mobile sticky ATC */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ivory p-3 lg:hidden">
-        <button
-          type="button"
-          className="w-full bg-ink py-3 text-[11px] tracking-[0.18em] uppercase text-ivory"
-          onClick={() => {
-            addToCart(product, 1, size);
-            setCartOpen(true);
-          }}
-        >
-          Add to Cart · {formatINR(product.price)}
-        </button>
+        {affiliate ? (
+          <button
+            type="button"
+            className="w-full rounded-full bg-ink py-3 text-[11px] font-semibold tracking-[0.18em] uppercase text-ivory"
+            onClick={() => void buyFromPartner()}
+          >
+            {buyingPartner ? "Opening partner…" : `Buy from Partner · ${formatINR(product.price)}`}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="w-full rounded-full bg-ink py-3 text-[11px] font-semibold tracking-[0.18em] uppercase text-ivory"
+            onClick={() => {
+              if (!size) {
+                setSizeError(true);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                return;
+              }
+              addToCart(product, 1, size);
+              setCartOpen(true);
+            }}
+          >
+            Add to Bag · {formatINR(product.price)}
+          </button>
+        )}
       </div>
     </div>
   );

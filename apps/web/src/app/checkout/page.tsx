@@ -11,10 +11,12 @@ const steps = ["ADDRESS", "DELIVERY", "PAYMENT", "CONFIRMATION"] as const;
 type AddressForm = {
   fullName: string;
   phone: string;
+  email: string;
   line1: string;
   city: string;
   state: string;
   pincode: string;
+  country: string;
 };
 
 export default function CheckoutPage() {
@@ -28,15 +30,17 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState<AddressForm>({
     fullName: "",
     phone: "",
+    email: "",
     line1: "",
     city: "",
     state: "",
     pincode: "",
+    country: "India",
   });
 
   const cart = useCommerceStore((s) => s.cart);
   const clearCart = useCommerceStore((s) => s.clearCart);
-  const { subtotal, shipping, discount, total } = useCartTotals();
+  const { subtotal, shipping, discount, total, partition } = useCartTotals();
   const router = useRouter();
 
   useEffect(() => {
@@ -60,7 +64,35 @@ export default function CheckoutPage() {
     );
   }
 
+  async function finalizeCheshireOrder(localOrderId: string, method: string) {
+    const fulfillable = cart.filter((i) => i.product.productType !== "affiliate");
+    if (!fulfillable.length) return;
+    await fetch("/api/checkout/orchestrate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: fulfillable.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          variantLabel: i.variantLabel,
+          product: i.product,
+        })),
+        address,
+        paymentMethod: method,
+        subtotal,
+        shipping,
+        discount,
+        total,
+        localOrderId,
+      }),
+    });
+  }
+
   async function payWithRazorpay() {
+    if (!partition.hasFulfillable) {
+      setError("This bag only has partner items — complete those on the partner’s site.");
+      return;
+    }
     setPaying(true);
     setError(null);
     try {
@@ -102,6 +134,7 @@ export default function CheckoutPage() {
 
       setOrderId(localOrderId);
       setPaymentId(verified.paymentId);
+      await finalizeCheshireOrder(localOrderId, "RAZORPAY");
       clearCart();
       setStep(3);
     } catch (e) {
@@ -112,8 +145,9 @@ export default function CheckoutPage() {
     }
   }
 
-  function placeCod() {
+  async function placeCod() {
     const id = `CH${Date.now().toString().slice(-10)}`;
+    await finalizeCheshireOrder(id, "COD");
     setOrderId(id);
     clearCart();
     setStep(3);
@@ -122,6 +156,16 @@ export default function CheckoutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <h1 className="font-serif text-4xl">Checkout</h1>
+      {partition.hasAffiliate ? (
+        <p className="mt-3 text-sm text-muted">
+          Partner items stay in your session — complete those on the partner’s site. Cheshire checkout is only for items we fulfil.
+        </p>
+      ) : null}
+      {partition.hasAffiliate ? (
+        <p className="mt-4 text-sm text-muted">
+          Partner items are sold by their labels. Your Cheshire bag is charged here.
+        </p>
+      ) : null}
       <ol className="mt-6 flex flex-wrap gap-3 text-[10px] tracking-[0.16em] uppercase text-muted">
         {steps.map((s, i) => (
           <li key={s} className={i === step ? "text-ink" : ""}>
@@ -140,10 +184,12 @@ export default function CheckoutPage() {
               setAddress({
                 fullName: String(fd.get("fullName") || ""),
                 phone: String(fd.get("phone") || ""),
+                email: String(fd.get("email") || ""),
                 line1: String(fd.get("line1") || ""),
                 city: String(fd.get("city") || ""),
                 state: String(fd.get("state") || ""),
                 pincode: String(fd.get("pincode") || ""),
+                country: "India",
               });
               setStep(1);
             }}
@@ -151,13 +197,14 @@ export default function CheckoutPage() {
             <h2 className="text-sm tracking-[0.16em] uppercase">Shipping address</h2>
             <input name="fullName" required placeholder="Full name" className="border border-line bg-transparent px-3 py-3" />
             <input name="phone" required placeholder="Phone" className="border border-line bg-transparent px-3 py-3" />
+            <input name="email" type="email" placeholder="Email" className="border border-line bg-transparent px-3 py-3" />
             <input name="line1" required placeholder="Address line 1" className="border border-line bg-transparent px-3 py-3" />
             <div className="grid gap-4 sm:grid-cols-3">
               <input name="city" required placeholder="City" className="border border-line bg-transparent px-3 py-3" />
               <input name="state" required placeholder="State" className="border border-line bg-transparent px-3 py-3" />
               <input name="pincode" required placeholder="PIN" className="border border-line bg-transparent px-3 py-3" />
             </div>
-            <button type="submit" className="mt-2 bg-ink py-3 text-[11px] tracking-[0.16em] uppercase text-ivory">
+            <button type="submit" className="mt-2 bg-gold py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory">
               Continue to delivery
             </button>
           </form>
@@ -177,7 +224,7 @@ export default function CheckoutPage() {
             </label>
             <button
               type="button"
-              className="mt-6 bg-ink px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-ivory"
+              className="mt-6 bg-gold px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory"
               onClick={() => setStep(2)}
             >
               Continue to payment
@@ -238,7 +285,7 @@ export default function CheckoutPage() {
             <button
               type="button"
               disabled={paying || (payment === "Razorpay" && razorpayMode === "unconfigured")}
-              className="mt-6 w-full bg-ink py-3 text-[11px] tracking-[0.16em] uppercase text-ivory disabled:opacity-50"
+              className="mt-6 w-full bg-gold py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory disabled:opacity-50"
               onClick={() => {
                 if (payment === "COD") placeCod();
                 else void payWithRazorpay();

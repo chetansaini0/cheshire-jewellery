@@ -4,9 +4,9 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { getBestsellers, getByMood } from "@/lib/catalog";
 
 export const metadata: Metadata = {
-  title: "Inspiration board · aesthetic jewellery looks",
+  title: "Lookbook · streetwear fits & outfit ideas",
   description:
-    "Pinterest-style jewellery moodboard for CHESHIRE — minimal, bold, romantic, dark, and statement looks to shop.",
+    "The CHESHIRE lookbook — minimal, bold, romantic, dark and statement fits to shop.",
 };
 
 export default function InspirationPage() {
@@ -23,14 +23,14 @@ export default function InspirationPage() {
         <p className="text-[11px] tracking-[0.22em] uppercase text-muted">CHESHIRE lookbook</p>
         <h1 className="mt-3 font-serif text-5xl md:text-6xl">Inspiration</h1>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-          A Pinterest-inspired board of how our pieces live on skin — layered chains, quiet rings,
-          statement earrings, and noir metals. Tap any pin to shop the mood.
+          How CHESHIRE lives on the street — heavyweight tees, baggy denim, sharp outerwear
+          and all-black everything. Tap any look to shop it.
         </p>
       </div>
 
       <PinterestBoard
         title="THE BOARD"
-        subtitle="Save the energy. Shop the pieces. Build your own look."
+        subtitle="Save the energy. Shop the fit. Build your own look."
       />
 
       <div className="mx-auto max-w-site space-y-16 px-4 pb-20 sm:px-6 lg:px-10">

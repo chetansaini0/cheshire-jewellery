@@ -7,7 +7,7 @@ import { useUI } from "@/components/providers/UIProvider";
 import { catalog } from "@/lib/catalog";
 import { formatINR } from "@cheshire/utils";
 
-const popular = ["silver ring", "minimal necklace", "gift under 2000", "black jewellery", "hoops"];
+const popular = ["oversized tee", "baggy jeans", "black hoodie", "track set", "gift under 2000"];
 
 export function SearchOverlay() {
   const { searchOpen, setSearchOpen } = useUI();
@@ -58,8 +58,8 @@ export function SearchOverlay() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && q.trim()) commit(q.trim());
               }}
-              placeholder="Try “minimal necklace” or “gift under 2000”"
-              className="mt-6 w-full border-b border-ink bg-transparent py-4 font-serif text-3xl outline-none placeholder:text-metal md:text-5xl"
+              placeholder="Try “black hoodie” or “gift under 2000”"
+              className="mt-6 w-full border-b border-ink bg-transparent py-4 font-serif text-3xl outline-none placeholder:text-muted md:text-5xl"
               aria-label="Search products"
             />
 
@@ -119,7 +119,7 @@ export function SearchOverlay() {
                   </li>
                 ))}
                 {!results.length ? (
-                  <li className="text-sm text-muted">No pieces matched. Try a mood or category.</li>
+                  <li className="text-sm text-muted">Nothing matched. Try a mood or category.</li>
                 ) : null}
                 <li>
                   <Link

@@ -1,25 +1,5 @@
 import { Router } from "express";
-import {
-  calcDiscount,
-  productImage,
-  seedProducts,
-} from "@cheshire/database/catalog";
-
-const catalog = seedProducts.map((p, index) => ({
-  id: `seed-${p.sku}`,
-  ...p,
-  discountPercent: calcDiscount(p.price, p.mrp),
-  images: [
-    { id: "1", url: productImage(p.imageIds[0]), alt: p.name, sortOrder: 0, isPrimary: true },
-    { id: "2", url: productImage(p.imageIds[1]), alt: p.name, sortOrder: 1 },
-  ],
-  hoverImage: productImage(p.imageIds[1]),
-  isPublished: true,
-  isNew: Boolean(p.isNew) || index < 6,
-  isBestseller: Boolean(p.isBestseller),
-  createdAt: new Date(Date.now() - index * 86400000).toISOString(),
-  updatedAt: new Date().toISOString(),
-}));
+import { catalog } from "./catalog-bridge";
 
 export const productsRouter = Router();
 
@@ -52,7 +32,7 @@ productsRouter.get("/", (req, res) => {
 });
 
 productsRouter.get("/:slug", (req, res) => {
-  const product = catalog.find((p) => p.slug === req.params.slug);
+  const product = catalog.find((p) => p.slug === String(req.params.slug));
   if (!product) return res.status(404).json({ error: "Not found" });
   return res.json(product);
 });

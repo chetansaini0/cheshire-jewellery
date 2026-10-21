@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { FlatList, Text, TextInput, View } from "react-native";
-import { seedProducts } from "@cheshire/database/catalog";
+import { seedProducts } from "@cheshire/database";
 import { formatINR } from "@cheshire/utils";
 
 export default function SearchScreen() {
@@ -22,7 +22,7 @@ export default function SearchScreen() {
       <TextInput
         value={q}
         onChangeText={setQ}
-        placeholder="silver ring, gift under 2000..."
+        placeholder="oversized tee, baggy jeans..."
         placeholderTextColor="#B8B8B8"
         style={{
           marginTop: 16,
@@ -38,7 +38,7 @@ export default function SearchScreen() {
         keyExtractor={(item) => item.sku}
         ListEmptyComponent={
           <Text style={{ color: "#6B6B6B" }}>
-            Try popular: minimal necklace, black jewellery, gift under 2000
+            Try popular: oversized tee, black hoodie, gift under 2000
           </Text>
         }
         renderItem={({ item }) => (

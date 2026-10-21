@@ -12,11 +12,11 @@ export function ShopByMood() {
             <Link
               key={mood.slug}
               href={`/shop?mood=${mood.slug}`}
-              className="group bg-ivory p-8 transition hover:bg-ink hover:text-ivory"
+              className="group bg-ivory p-8 transition hover:bg-gold hover:text-ink"
               data-cursor="view"
             >
               <p className="font-serif text-3xl tracking-wide">{mood.name}</p>
-              <p className="mt-3 text-sm text-muted transition group-hover:text-ivory/70">
+              <p className="mt-3 text-sm text-muted transition group-hover:text-ink/70">
                 {mood.copy}
               </p>
             </Link>

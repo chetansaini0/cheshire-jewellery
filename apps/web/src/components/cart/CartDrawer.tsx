@@ -68,7 +68,7 @@ export function CartDrawer() {
                 <ul className="space-y-5">
                   {cart.map((item) => (
                     <li key={item.id} className="flex gap-4">
-                      <div className="relative h-24 w-20 overflow-hidden bg-[#ebe7df]">
+                      <div className="relative h-24 w-20 overflow-hidden bg-line">
                         <Image
                           src={getPrimaryImage(item.product)}
                           alt={item.product.name}
@@ -164,7 +164,7 @@ export function CartDrawer() {
                 <Link
                   href="/checkout"
                   onClick={() => setCartOpen(false)}
-                  className="bg-ink py-3 text-center text-[11px] tracking-[0.16em] uppercase text-ivory"
+                  className="bg-gold py-3 text-center text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory"
                   data-cursor="shop"
                 >
                   Checkout

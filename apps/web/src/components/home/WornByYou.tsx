@@ -17,7 +17,7 @@ export function WornByYou() {
         {lifestyleShots.map((shot, i) => (
           <div
             key={`${shot.id}-${i}`}
-            className={`relative mb-2 break-inside-avoid overflow-hidden bg-[#ebe7df] md:mb-3 ${
+            className={`relative mb-2 break-inside-avoid overflow-hidden bg-line md:mb-3 ${
               i % 5 === 0 ? "aspect-[3/4]" : i % 3 === 0 ? "aspect-[4/3]" : "aspect-square"
             }`}
           >

@@ -14,7 +14,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/stylist",
     "/journal",
     "/collections",
-    "/inspiration",
+    "/contact",
+    "/supplier",
+    "/partners",
+    "/policies/privacy",
+    "/policies/affiliate-disclosure",
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: new Date(),
@@ -23,5 +27,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${base}/products/${p.slug}`,
     lastModified: new Date(p.updatedAt),
   }));
-  return [...staticRoutes, ...products];
+  const brands = [...new Set(catalog.map((p) => p.brandSlug).filter(Boolean))].map((slug) => ({
+    url: `${base}/brands/${slug}`,
+    lastModified: new Date(),
+  }));
+  return [...staticRoutes, ...products, ...brands];
 }

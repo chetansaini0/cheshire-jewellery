@@ -1,12 +1,36 @@
-import type { Product, ProductFilters, Paginated, Mood, Occasion } from "@cheshire/types";
+import type { Product, ProductFilters, Paginated, Mood, Occasion, ProductLabel } from "@cheshire/types";
 import {
   calcDiscount,
   productImage,
   seedProducts,
   categories as seedCategories,
 } from "@cheshire/database/catalog";
+import { publicCommerceFields } from "@cheshire/commerce";
+
+const LABEL_FROM_COPY: Record<string, ProductLabel> = {
+  Exclusive: "EXCLUSIVE",
+  Trending: "TRENDING",
+  New: "NEW",
+  "Best Seller": "BEST_SELLER",
+  Limited: "LIMITED",
+  "Partner Pick": "PARTNER_PICK",
+};
+
+function merchLabel(p: (typeof seedProducts)[number], fallback: ProductLabel | null): ProductLabel | null {
+  if (fallback) return fallback;
+  const fromCopy = p.labels?.[0] ? LABEL_FROM_COPY[p.labels[0]] : undefined;
+  if (fromCopy) return fromCopy;
+  if (p.badge === "BESTSELLER") return "BEST_SELLER";
+  if (p.badge === "NEW") return "NEW";
+  if (p.badge === "LIMITED") return "LIMITED";
+  if (p.badge === "EXCLUSIVE") return "EXCLUSIVE";
+  if (p.badge === "TRENDING") return "TRENDING";
+  if (p.badge === "PARTNER_PICK") return "PARTNER_PICK";
+  return null;
+}
 
 export function mapSeedToProduct(p: (typeof seedProducts)[number], index: number): Product {
+  const commerce = publicCommerceFields(p.sku);
   return {
     id: `local-${p.sku}`,
     sku: p.sku,
@@ -44,19 +68,32 @@ export function mapSeedToProduct(p: (typeof seedProducts)[number], index: number
       },
     ],
     hoverImage: productImage(p.imageIds[1]),
+    videoUrl: p.videoUrl ?? null,
     sizes: p.sizes,
     dimensions: "See size guide on product page",
-    care: "Store dry. Avoid perfume and water. Wipe with a soft cloth.",
-    shippingInfo: "Dispatched in 24–48 hours. Free shipping over ₹999.",
+    care: "Machine wash cold, inside out. Do not tumble dry. Iron on reverse.",
+    shippingInfo: p.estimatedDeliveryMinDays
+      ? `Dispatch in 24–48 hours. ${commerce.estimatedDelivery}`
+      : "Dispatched in 24–48 hours. Free shipping over ₹999.",
     returnsInfo: "Easy 7-day returns on unused products.",
-    warranty: "6-month manufacturing warranty.",
-    seoTitle: `${p.name} | CHESHIRE Jewellery`,
+    warranty: "30-day quality promise on seams and fabric.",
+    seoTitle: `${p.name} | CHESHIRE`,
     seoDescription: p.shortDescription,
     isPublished: true,
     isNew: Boolean(p.isNew) || index < 6,
     isBestseller: Boolean(p.isBestseller),
     createdAt: new Date(Date.now() - index * 86400000).toISOString(),
     updatedAt: new Date().toISOString(),
+    productType: p.productType ?? commerce.productType,
+    brandSlug: p.brandSlug ?? commerce.brandSlug,
+    brandName: p.brandName ?? commerce.brandName,
+    subcategory: p.subcategory ?? commerce.subcategory,
+    stoneType: p.stoneType ?? commerce.stoneType,
+    weight: p.weight ?? commerce.weight,
+    label: merchLabel(p, commerce.label),
+    estimatedDelivery: commerce.estimatedDelivery,
+    affiliateDisclosure: commerce.affiliateDisclosure,
+    availability: p.stock > 0 ? "in_stock" : "out_of_stock",
   };
 }
 
@@ -159,15 +196,15 @@ export function getByMood(mood: Mood, limit = 8): Product[] {
 
 export function getComplementary(product: Product, limit = 4): Product[] {
   const complementMap: Record<string, string[]> = {
-    necklaces: ["earrings", "rings"],
-    chains: ["bracelets", "rings"],
-    rings: ["bracelets", "earrings"],
-    earrings: ["necklaces", "rings"],
-    bracelets: ["rings", "anklets"],
-    anklets: ["bracelets", "rings"],
-    sets: ["rings", "earrings"],
+    tees: ["denim", "outerwear", "accessories"],
+    hoodies: ["denim", "accessories"],
+    outerwear: ["tees", "denim"],
+    denim: ["tees", "hoodies", "accessories"],
+    dresses: ["outerwear", "accessories"],
+    "co-ords": ["accessories", "tees"],
+    accessories: ["tees", "hoodies"],
   };
-  const targets = complementMap[product.category] ?? ["rings"];
+  const targets = complementMap[product.category] ?? ["tees"];
   return catalog
     .filter((p) => p.id !== product.id && targets.includes(p.category))
     .slice(0, limit);
@@ -182,6 +219,17 @@ export function youMayAlsoLike(product: Product, limit = 8): Product[] {
           p.moods.some((m) => product.moods.includes(m)))
     )
     .slice(0, limit);
+}
+
+export function getProductsByBrand(slug: string): Product[] {
+  return catalog.filter((p) => p.brandSlug === slug);
+}
+
+export function formatProductLabel(label?: Product["label"] | Product["badge"]) {
+  if (!label) return null;
+  if (label === "BEST_SELLER" || label === "BESTSELLER") return "Best Seller";
+  if (label === "PARTNER_PICK") return "Partner Pick";
+  return label.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function stylistRecommend(input: {

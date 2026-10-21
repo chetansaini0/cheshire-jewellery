@@ -43,7 +43,7 @@ export default function AccountPage() {
         {sent && mode === "otp" ? (
           <input required placeholder="Enter OTP" className="w-full border border-line bg-transparent px-3 py-3" />
         ) : null}
-        <button type="submit" className="w-full bg-ink py-3 text-[11px] tracking-[0.16em] uppercase text-ivory">
+        <button type="submit" className="w-full bg-gold py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory">
           {mode === "otp" && !sent ? "Send OTP" : "Continue"}
         </button>
       </form>

@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
-import { CustomCursor } from "@/components/effects/CustomCursor";
-import { SmoothScroll } from "@/components/effects/SmoothScroll";
 import { UIProvider, useUI } from "@/components/providers/UIProvider";
 
 function ShellInner({ children }: { children: React.ReactNode }) {
   const { cartOpen, searchOpen } = useUI();
+  const pathname = usePathname();
+  const supplierApp = pathname?.startsWith("/supplier");
 
   useEffect(() => {
     document.body.style.overflow = cartOpen || searchOpen ? "hidden" : "";
@@ -20,10 +21,12 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     };
   }, [cartOpen, searchOpen]);
 
+  if (supplierApp) {
+    return <main id="main">{children}</main>;
+  }
+
   return (
     <>
-      <SmoothScroll />
-      <CustomCursor />
       <AnnouncementBar />
       <Header />
       <main id="main">{children}</main>

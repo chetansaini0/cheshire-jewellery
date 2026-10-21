@@ -51,7 +51,7 @@ export function PinterestBoard({
             className="mb-3 break-inside-avoid md:mb-4"
           >
             <Link href={pin.href} className="group block" data-cursor="view">
-              <div className={`relative overflow-hidden bg-[#ebe7df] ${aspectClass[pin.aspect]}`}>
+              <div className={`relative overflow-hidden bg-line ${aspectClass[pin.aspect]}`}>
                 <Image
                   src={pinSrc(pin.imageId, 900)}
                   alt={pin.title}
@@ -70,7 +70,7 @@ export function PinterestBoard({
         ))}
       </div>
 
-      <p className="mt-6 text-[11px] tracking-[0.12em] uppercase text-metal">
+      <p className="mt-6 text-[11px] tracking-[0.12em] uppercase text-muted">
         Visual references · Unsplash editorial photography · replace with CHESHIRE studio shoots anytime
       </p>
     </section>

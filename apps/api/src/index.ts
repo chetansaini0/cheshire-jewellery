@@ -11,8 +11,13 @@ import { paymentsRouter } from "./routes/payments";
 import { stylistRouter } from "./routes/stylist";
 import { storesRouter } from "./routes/stores";
 import { adminRouter } from "./routes/admin";
+import { commerceRouter } from "./routes/commerce";
 import { wishlistRouter } from "./routes/wishlist";
 import { searchRouter } from "./routes/search";
+import { affiliateRouter } from "./routes/affiliate";
+import { suppliersRouter } from "./routes/suppliers";
+import { integrationsRouter } from "./routes/integrations";
+import { startIntegrationWorker } from "@cheshire/integrations";
 
 const app = express();
 const port = Number(process.env.API_PORT || 4000);
@@ -49,6 +54,10 @@ app.use("/api/stylist", stylistRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/commerce", commerceRouter);
+app.use("/api/affiliate", affiliateRouter);
+app.use("/api/suppliers", suppliersRouter);
+app.use("/api/integrations", integrationsRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
@@ -57,4 +66,5 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 app.listen(port, () => {
   console.log(`CHESHIRE API listening on :${port}`);
+  startIntegrationWorker();
 });

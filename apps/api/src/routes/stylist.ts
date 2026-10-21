@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { seedProducts } from "@cheshire/database/catalog";
+import { seedProducts } from "@cheshire/database";
 
 export const stylistRouter = Router();
 

@@ -14,6 +14,18 @@ async function main() {
 
   await prisma.orderItem.deleteMany();
   await prisma.payment.deleteMany();
+  await prisma.affiliateConversion.deleteMany().catch(() => undefined);
+  await prisma.affiliateClick.deleteMany().catch(() => undefined);
+  await prisma.refund.deleteMany().catch(() => undefined);
+  await prisma.returnRequest.deleteMany().catch(() => undefined);
+  await prisma.shipment.deleteMany().catch(() => undefined);
+  await prisma.supplierOrder.deleteMany().catch(() => undefined);
+  await prisma.payout.deleteMany().catch(() => undefined);
+  await prisma.commissionLedger.deleteMany().catch(() => undefined);
+  await prisma.commissionRule.deleteMany().catch(() => undefined);
+  await prisma.shippingZone.deleteMany().catch(() => undefined);
+  await prisma.commerceEvent.deleteMany().catch(() => undefined);
+  await prisma.analyticsEvent.deleteMany().catch(() => undefined);
   await prisma.order.deleteMany();
   await prisma.cartItem.deleteMany();
   await prisma.cart.deleteMany();
@@ -24,6 +36,10 @@ async function main() {
   await prisma.inventoryLog.deleteMany();
   await prisma.recentlyViewed.deleteMany();
   await prisma.product.deleteMany();
+  await prisma.shippingZone.deleteMany().catch(() => undefined);
+  await prisma.supplier.deleteMany().catch(() => undefined);
+  await prisma.affiliatePartner.deleteMany().catch(() => undefined);
+  await prisma.subcategory.deleteMany().catch(() => undefined);
   await prisma.category.deleteMany();
   await prisma.collection.deleteMany();
   await prisma.coupon.deleteMany();
@@ -61,6 +77,46 @@ async function main() {
     collectionMap.set(c.slug, row.id);
   }
 
+  const xyz = await prisma.affiliatePartner.upsert({
+    where: { slug: "brand-xyz" },
+    update: {},
+    create: {
+      name: "Brand XYZ",
+      slug: "brand-xyz",
+      network: "direct",
+      website: "https://partner-example.com",
+      defaultCommission: 8,
+      status: "ACTIVE",
+    },
+  });
+
+  const atelier = await prisma.supplier.upsert({
+    where: { email: "atelier@lumen.example" },
+    update: { status: "APPROVED" },
+    create: {
+      brandName: "Atelier Noir",
+      slug: "atelier-noir",
+      ownerName: "Aanya Shah",
+      email: "atelier@lumen.example",
+      phone: "+91 90000 11101",
+      businessName: "Atelier Noir Private Limited",
+      gstNumber: "27AABCL1234Q1Z5",
+      addressLine1: "12 Kala Ghoda",
+      city: "Mumbai",
+      state: "Maharashtra",
+      pincode: "400001",
+      status: "APPROVED",
+      commissionPercent: 12,
+    },
+  });
+
+  await prisma.commissionRule.createMany({
+    data: [
+      { name: "Global apparel", scope: "GLOBAL", percent: 15, priority: 1 },
+      { name: "Atelier Noir", scope: "SUPPLIER", percent: 12, priority: 40, supplierId: atelier.id },
+    ],
+  });
+
   for (const p of seedProducts) {
     const categoryId = categoryMap.get(p.category);
     if (!categoryId) throw new Error(`Missing category ${p.category}`);
@@ -91,12 +147,22 @@ async function main() {
         isPublished: true,
         isNew: Boolean(p.isNew),
         isBestseller: Boolean(p.isBestseller),
+        productType:
+          p.productType === "affiliate"
+            ? "AFFILIATE"
+            : p.productType === "marketplace"
+              ? "MARKETPLACE"
+              : "DROPSHIP",
+        affiliatePartnerId: p.productType === "affiliate" ? xyz.id : undefined,
+        supplierId: p.productType === "marketplace" ? atelier.id : undefined,
+        stoneType: p.stoneType,
+        weight: p.weight,
         dimensions: "See size guide",
-        care: "Store in a dry pouch. Avoid perfume and water contact. Wipe with a soft cloth.",
+        care: "Machine wash cold inside out. Do not tumble dry. Iron on reverse.",
         shippingInfo: "Dispatched in 24–48 hours. Free shipping over ₹999.",
         returnsInfo: "Easy 7-day returns on unused products with original packaging.",
-        warranty: "6-month manufacturing warranty.",
-        seoTitle: `${p.name} | CHESHIRE Jewellery`,
+        warranty: "30-day quality promise on seams and fabric.",
+        seoTitle: `${p.name} | CHESHIRE`,
         seoDescription: p.shortDescription,
         images: {
           create: [
@@ -253,28 +319,28 @@ async function main() {
   await prisma.blogPost.createMany({
     data: [
       {
-        title: "How to Style Silver Jewellery",
-        slug: "how-to-style-silver-jewellery",
+        title: "How to Style Baggy Jeans",
+        slug: "how-to-style-baggy-jeans",
         excerpt: "Layer without clutter. Contrast without chaos.",
-        content: "Start with one signature chain. Add a fine layer. Finish with a single statement earring or ring.",
-        tags: ["style", "silver"],
+        content: "Start with a fitted top. Add a cropped jacket. Finish with chunky sneakers.",
+        tags: ["style", "denim"],
         isPublished: true,
         publishedAt: new Date(),
-        seoTitle: "How to Style Silver Jewellery | CHESHIRE",
-        seoDescription: "A CHESHIRE guide to styling silver jewellery with intention.",
+        seoTitle: "How to Style Baggy Jeans | CHESHIRE",
+        seoDescription: "A CHESHIRE guide to styling baggy denim with intention.",
       },
       {
-        title: "5 Jewellery Pieces Everyone Needs",
-        slug: "5-jewellery-pieces-everyone-needs",
+        title: "5 Wardrobe Pieces Everyone Needs",
+        slug: "5-wardrobe-pieces-everyone-needs",
         excerpt: "Build a wardrobe that works harder than trends.",
-        content: "Signature chain, everyday hoops, stack ring, cuff, and one bold pendant.",
+        content: "Heavyweight tee, grey hoodie, straight denim, a trench, and one bold sneaker.",
         tags: ["essentials", "edit"],
         isPublished: true,
         publishedAt: new Date(),
       },
       {
-        title: "Best Jewellery Gifts Under ₹2000",
-        slug: "best-jewellery-gifts-under-2000",
+        title: "Best Clothing Gifts Under ₹2000",
+        slug: "best-clothing-gifts-under-2000",
         excerpt: "Gifts that feel premium without the premium panic.",
         content: "Look for finish quality, wearability, and packaging — not just price.",
         tags: ["gifting", "under-2000"],
@@ -291,10 +357,10 @@ async function main() {
         title: "Homepage Hero",
         content: {
           headline: "WEAR YOUR STORY.",
-          supporting: "Jewellery designed for the moments that become memories.",
+          supporting: "Streetwear made to be lived in.",
           ctaPrimary: { label: "SHOP NEW", href: "/shop?sort=newest" },
           ctaSecondary: { label: "EXPLORE CHESHIRE", href: "/about" },
-          mediaUrl: productImage("photo-1515562141207-7a88fb7ce338", 1600),
+          mediaUrl: productImage("photo-1445205170230-053b83016050", 1600),
           mediaType: "image",
         },
       },
@@ -305,7 +371,7 @@ async function main() {
           headline: "DON'T FOLLOW THE LOOK.",
           supporting: "Create your own.",
           cta: { label: "SHOP NOW", href: "/shop" },
-          mediaUrl: productImage("photo-1617038260897-41a1f14a8ca0", 1600),
+          mediaUrl: productImage("photo-1529139574466-a303027c1d8b", 1600),
         },
       },
     ],

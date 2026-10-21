@@ -42,7 +42,7 @@ export default function SupportPage() {
         <h2 className="text-sm tracking-[0.16em] uppercase">Support ticket</h2>
         <input placeholder="Subject" className="w-full border border-line bg-transparent px-3 py-3" />
         <textarea placeholder="How can we help?" rows={4} className="w-full border border-line bg-transparent px-3 py-3" />
-        <button type="button" className="bg-ink px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-ivory">
+        <button type="button" className="bg-gold px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory">
           Submit ticket
         </button>
       </form>

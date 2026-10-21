@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { ShopClient } from "./ShopClient";
 
 export const metadata: Metadata = {
-  title: "Shop aesthetic jewellery online",
+  title: "Shop streetwear & clothing online",
   description:
-    "Browse CHESHIRE rings, necklaces, earrings, bracelets, anklets and sets. Minimal, bold, romantic and statement jewellery.",
+    "Browse CHESHIRE tees, hoodies, outerwear, denim, dresses, co-ords and accessories. New drops every Friday.",
 };
 
 export default function ShopPage() {

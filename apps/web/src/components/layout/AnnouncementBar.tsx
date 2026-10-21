@@ -1,21 +1,13 @@
-"use client";
-
-import Link from "next/link";
+import { Marquee } from "@/components/home/Marquee";
 
 export function AnnouncementBar() {
   return (
-    <div className="relative z-50 bg-ink text-ivory">
-      <div className="mx-auto flex h-9 max-w-site items-center justify-center px-4">
-        <p className="text-[10px] tracking-[0.22em] uppercase sm:text-[11px]">
-          FREE SHIPPING ON ORDERS OVER ₹999
-        </p>
-        <Link
-          href="/account"
-          className="absolute right-4 hidden text-[10px] tracking-[0.16em] uppercase text-metal hover:text-ivory sm:block"
-        >
-          Cheshire Club
-        </Link>
-      </div>
+    <div className="relative z-50 bg-ink py-2 text-ivory">
+      <Marquee
+        speed="fast"
+        items={["Free shipping over ₹999", "New drop every Friday", "7-day easy returns", "Join the Cheshire Club — 10% off first order"]}
+        className="text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px]"
+      />
     </div>
   );
 }

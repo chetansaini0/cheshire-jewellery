@@ -2,18 +2,18 @@ import Link from "next/link";
 
 const posts = [
   {
-    slug: "how-to-style-silver-jewellery",
-    title: "How to Style Silver Jewellery",
+    slug: "how-to-style-baggy-jeans",
+    title: "How to Style Baggy Jeans",
     excerpt: "Layer without clutter. Contrast without chaos.",
   },
   {
-    slug: "5-jewellery-pieces-everyone-needs",
-    title: "5 Jewellery Pieces Everyone Needs",
+    slug: "5-wardrobe-pieces-everyone-needs",
+    title: "5 Wardrobe Pieces Everyone Needs",
     excerpt: "Build a wardrobe that works harder than trends.",
   },
   {
-    slug: "best-jewellery-gifts-under-2000",
-    title: "Best Jewellery Gifts Under ₹2000",
+    slug: "best-clothing-gifts-under-2000",
+    title: "Best Clothing Gifts Under ₹2000",
     excerpt: "Gifts that feel premium without the premium panic.",
   },
 ];

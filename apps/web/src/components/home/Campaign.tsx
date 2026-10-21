@@ -1,30 +1,22 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { productImage } from "@cheshire/database/catalog";
 
 export function Campaign() {
   return (
-    <section className="relative min-h-[70vh] overflow-hidden">
-      <Image
-        src={productImage("photo-1599643478518-a784e5dc4c8f", 1800)}
-        alt="Don't follow the look"
-        fill
-        className="object-cover"
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-ink/45" />
-      <div className="relative z-10 mx-auto flex min-h-[70vh] max-w-site flex-col justify-center px-4 text-ivory sm:px-6 lg:px-10">
-        <h2 className="font-serif text-5xl leading-none md:text-7xl">DON&apos;T FOLLOW THE LOOK.</h2>
-        <p className="mt-4 text-lg text-ivory/80">Create your own.</p>
-        <Link
-          href="/shop"
-          className="mt-8 inline-flex w-fit bg-ivory px-7 py-3 text-[11px] tracking-[0.18em] uppercase text-ink"
-          data-cursor="shop"
-        >
-          Shop Now
-        </Link>
+    <section className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
+      <div className="relative overflow-hidden rounded-3xl bg-gold text-ink">
+        <div className="grid items-center md:grid-cols-2">
+          <div className="p-8 md:p-14">
+            <p className="eyebrow">Denim Lab</p>
+            <h2 className="mt-3 font-serif text-6xl uppercase leading-[0.85] md:text-8xl">Baggy is back.</h2>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink/75">14oz rigid denim, cut wide and low. Built to fade into your story.</p>
+            <Link href="/shop/denim" className="mt-8 inline-block rounded-full bg-ink px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ivory transition hover:bg-ink/80">Shop denim</Link>
+          </div>
+          <div className="relative aspect-[4/5] md:aspect-auto md:h-full md:min-h-[520px]">
+            <Image src={productImage("photo-1541099649105-f69ad21f3246", 1200)} alt="Baggy denim" fill sizes="(max-width:768px) 100vw, 50vw" className="object-cover" />
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -41,8 +41,9 @@ authRouter.post("/otp/verify", (req, res) => {
       wishlistAlerts: true,
     },
   };
+  const expiresIn = (process.env.JWT_EXPIRES_IN || "7d") as jwt.SignOptions["expiresIn"];
   const token = jwt.sign({ sub: user.id, role: user.role }, secret, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+    expiresIn,
   });
   return res.json({ token, user });
 });

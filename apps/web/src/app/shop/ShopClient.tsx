@@ -6,7 +6,7 @@ import type { CategorySlug, Mood, SortOption } from "@cheshire/types";
 import { getProducts } from "@/lib/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
 
-const categoryTabs = ["all", "rings", "necklaces", "earrings", "bracelets", "anklets", "sets"] as const;
+const categoryTabs = ["all", "tees", "hoodies", "outerwear", "denim", "dresses", "co-ords", "accessories"] as const;
 const sorts: { value: SortOption; label: string }[] = [
   { value: "recommended", label: "Recommended" },
   { value: "newest", label: "Newest" },
@@ -51,7 +51,7 @@ export function ShopClient({
           <p className="text-[11px] tracking-[0.2em] uppercase text-muted">Catalogue</p>
           <h1 className="mt-2 font-serif text-4xl md:text-6xl">Shop</h1>
         </div>
-        <p className="text-sm text-muted">{result.total} pieces</p>
+        <p className="text-sm text-muted">{result.total} styles</p>
       </div>
 
       <div className="mt-6 flex gap-3 overflow-x-auto no-scrollbar">
@@ -60,7 +60,7 @@ export function ShopClient({
             key={c}
             href={c === "all" ? "/shop" : `/shop/${c}`}
             className={`whitespace-nowrap border px-4 py-2 text-[11px] tracking-[0.16em] uppercase ${
-              category === c ? "border-ink bg-ink text-ivory" : "border-line"
+              category === c ? "border-gold bg-gold text-ink" : "border-line"
             }`}
           >
             {c}
@@ -132,7 +132,7 @@ export function ShopClient({
             />
             <button
               type="button"
-              className="mt-6 w-full bg-ink py-3 text-[11px] tracking-[0.16em] uppercase text-ivory"
+              className="mt-6 w-full bg-gold py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory"
               onClick={() => setMobileFilters(false)}
             >
               Show {result.total} results
@@ -159,7 +159,7 @@ function Filters({
   sort: SortOption;
   setSort: (s: SortOption) => void;
 }) {
-  const materialOptions = ["Sterling Silver", "Black", "Brass", "Steel"];
+  const materialOptions = ["Cotton", "Denim", "Fleece", "Leather", "Wool"];
   return (
     <div className="space-y-8">
       <div className="lg:hidden">

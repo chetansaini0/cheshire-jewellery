@@ -1,6 +1,7 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import { seedProducts } from "@cheshire/database/catalog";
+import { seedProducts } from "@cheshire/database";
+import { adminDashboardMetrics, getAffiliateStats, getCommissionRules, getSuppliers } from "@cheshire/commerce";
 
 export const adminRouter = Router();
 
@@ -12,7 +13,7 @@ function requireAdmin(req: { headers: { authorization?: string } }, res: { statu
   }
   try {
     const payload = jwt.verify(header.slice(7), process.env.JWT_SECRET || "dev-secret") as { role?: string };
-    if (payload.role !== "ADMIN") {
+    if (payload.role !== "ADMIN" && payload.role !== "SUPER_ADMIN") {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
@@ -23,16 +24,13 @@ function requireAdmin(req: { headers: { authorization?: string } }, res: { statu
 }
 
 adminRouter.get("/dashboard", requireAdmin as never, (_req, res) => {
-  const revenue = seedProducts.reduce((s, p) => s + p.price * Math.max(1, Math.floor(p.reviewCount / 20)), 0);
   res.json({
-    revenue,
-    orders: 1284,
-    customers: 8420,
+    ...adminDashboardMetrics(),
     products: seedProducts.length,
     inventoryLow: seedProducts.filter((p) => p.stock < 20).length,
-    conversion: 2.8,
-    aov: 2140,
-    topProducts: seedProducts.filter((p) => p.isBestseller).slice(0, 5),
+    affiliate: getAffiliateStats(),
+    commissionRules: getCommissionRules(),
+    suppliers: getSuppliers().map((s) => ({ id: s.id, brandName: s.brandName, status: s.status })),
   });
 });
 

@@ -44,7 +44,7 @@ export default function StoresPage() {
             type="button"
             onClick={() => setCity(c)}
             className={`border px-4 py-2 text-[11px] tracking-[0.14em] uppercase ${
-              city === c ? "border-ink bg-ink text-ivory" : "border-line"
+              city === c ? "border-gold bg-gold text-ink" : "border-line"
             }`}
           >
             {c}

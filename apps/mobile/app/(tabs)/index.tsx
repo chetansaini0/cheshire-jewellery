@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { ScrollView, Text, View, Pressable, Image } from "react-native";
-import { seedProducts, productImage } from "@cheshire/database/catalog";
+import { seedProducts, productImage } from "@cheshire/database";
 import { formatINR } from "@cheshire/utils";
 import { moods } from "@cheshire/config";
 
@@ -16,7 +16,7 @@ export default function HomeScreen() {
           WEAR YOUR STORY.
         </Text>
         <Text style={{ marginTop: 12, color: "#6B6B6B", fontSize: 14, lineHeight: 20 }}>
-          Jewellery designed for the moments that become memories.
+          Streetwear made to be lived in.
         </Text>
         <Link href="/(tabs)/shop" asChild>
           <Pressable

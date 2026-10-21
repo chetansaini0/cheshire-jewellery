@@ -1,15 +1,12 @@
 import { Hero } from "@/components/home/Hero";
+import { Marquee } from "@/components/home/Marquee";
 import { ShopByCategory } from "@/components/home/ShopByCategory";
 import { NewDrops } from "@/components/home/NewDrops";
-import { CheshireEdit } from "@/components/home/CheshireEdit";
 import { Bestsellers } from "@/components/home/Bestsellers";
-import { ShopByMood } from "@/components/home/ShopByMood";
-import { Gifting } from "@/components/home/Gifting";
+import { Lookbook } from "@/components/home/Lookbook";
 import { Campaign } from "@/components/home/Campaign";
+import { ClubSignup } from "@/components/home/ClubSignup";
 import { WhyCheshire } from "@/components/home/WhyCheshire";
-import { WornByYou } from "@/components/home/WornByYou";
-import { PinterestBoard } from "@/components/home/PinterestBoard";
-import { StylistTeaser } from "@/components/home/StylistTeaser";
 import { getBestsellers, getNewDrops } from "@/lib/catalog";
 
 export default function HomePage() {
@@ -21,28 +18,28 @@ export default function HomePage() {
     "@type": "Organization",
     name: "CHESHIRE",
     url: "https://www.cheshire.com",
-    description: "Contemporary aesthetic jewellery for people who treat jewellery as part of their identity.",
-    brand: "CHESHIRE Jewellery",
+    description: "CHESHIRE is a streetwear and clothing label: heavyweight tees, hoodies, outerwear, denim, dresses and co-ords.",
+    brand: "CHESHIRE Clothing",
   };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Hero />
+      <div className="border-y border-ink bg-gold py-4 text-ink">
+        <Marquee
+          items={["Heavyweight tees", "Baggy denim", "Track sets", "Outerwear", "New drop Fridays", "Made in India"]}
+          className="font-serif text-3xl uppercase md:text-5xl"
+          separator="✺"
+        />
+      </div>
       <ShopByCategory />
       <NewDrops products={newDrops} />
-      <CheshireEdit />
       <Bestsellers products={bestsellers} />
-      <ShopByMood />
-      <PinterestBoard limit={8} />
-      <Gifting />
+      <Lookbook />
       <Campaign />
       <WhyCheshire />
-      <WornByYou />
-      <StylistTeaser />
+      <ClubSignup />
     </>
   );
 }

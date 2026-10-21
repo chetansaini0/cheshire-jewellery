@@ -53,7 +53,7 @@ export default function StylistPage() {
                 type="button"
                 onClick={() => setBudget(b.id)}
                 className={`border px-4 py-3 text-[11px] tracking-[0.14em] uppercase ${
-                  budget === b.id ? "border-ink bg-ink text-ivory" : "border-line"
+                  budget === b.id ? "border-gold bg-gold text-ink" : "border-line"
                 }`}
               >
                 {b.label}
@@ -107,7 +107,7 @@ function ChipGrid<T extends string>({
           type="button"
           onClick={() => onChange(o)}
           className={`border px-4 py-3 text-[11px] tracking-[0.14em] uppercase ${
-            value === o ? "border-ink bg-ink text-ivory" : "border-line"
+            value === o ? "border-gold bg-gold text-ink" : "border-line"
           }`}
         >
           {o.replace(/_/g, " ")}
@@ -122,7 +122,7 @@ function Next({ onClick, label = "Next" }: { onClick: () => void; label?: string
     <button
       type="button"
       onClick={onClick}
-      className="mt-8 bg-ink px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-ivory"
+      className="mt-8 bg-gold px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory"
     >
       {label}
     </button>

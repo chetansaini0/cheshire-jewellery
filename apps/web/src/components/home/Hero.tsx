@@ -1,85 +1,52 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { productImage } from "@cheshire/database/catalog";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[100svh] overflow-hidden bg-ink text-ivory">
-      <motion.div
-        className="absolute inset-0"
-        initial={{ scale: 1.08 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <Image
-          src={productImage("photo-1515562141207-7a88fb7ce338", 1800)}
-          alt="CHESHIRE campaign jewellery"
-          fill
-          priority
-          className="object-cover opacity-70"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/25 to-ink/70" />
-      </motion.div>
+    <section className="relative isolate overflow-hidden bg-ink text-ivory">
+      <div className="absolute inset-0 -z-10 grid grid-cols-1 md:grid-cols-2">
+        <div className="relative">
+          <Image
+            src={productImage("photo-1520975954732-35dd22299614", 1400)}
+            alt="CHESHIRE model in black leather"
+            fill
+            priority
+            sizes="(max-width:768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="relative hidden md:block">
+          <Image
+            src={productImage("photo-1529139574466-a303027c1d8b", 1400)}
+            alt="CHESHIRE model in red"
+            fill
+            priority
+            sizes="50vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-ink/10" />
+      </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-site flex-col justify-end px-4 pb-16 pt-28 sm:px-6 lg:px-10 lg:pb-20">
-        <motion.p
-          className="text-[11px] tracking-[0.28em] uppercase text-ivory/70"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-        >
-          Luxury without trying too hard
-        </motion.p>
-        <motion.h1
-          className="mt-4 max-w-4xl font-serif text-5xl leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.9 }}
-        >
-          WEAR YOUR STORY.
-        </motion.h1>
-        <motion.p
-          className="mt-5 max-w-md text-sm leading-relaxed text-ivory/80 sm:text-base"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.8 }}
-        >
-          Jewellery designed for the moments that become memories.
-        </motion.p>
-        <motion.div
-          className="mt-8 flex flex-wrap gap-3"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.8 }}
-        >
-          <Link
-            href="/shop?sort=newest"
-            className="bg-ivory px-7 py-3 text-[11px] tracking-[0.18em] uppercase text-ink"
-            data-cursor="shop"
-          >
-            Shop New
-          </Link>
-          <Link
-            href="/about"
-            className="border border-ivory/70 px-7 py-3 text-[11px] tracking-[0.18em] uppercase text-ivory"
-            data-cursor="view"
-          >
-            Explore CHESHIRE
-          </Link>
-        </motion.div>
-        <motion.div
-          className="mt-14 flex items-center gap-3 text-[10px] tracking-[0.22em] uppercase text-ivory/60"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1 }}
-        >
-          <span className="block h-10 w-px bg-ivory/40" />
-          Scroll
-        </motion.div>
+      <div className="mx-auto flex min-h-[86svh] max-w-site flex-col justify-end px-4 pb-10 pt-32 sm:px-6 lg:px-10 lg:pb-14">
+        <p className="inline-flex w-fit items-center gap-2 bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-ink">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink" /> Drop 07 — Live now
+        </p>
+        <h1 className="mt-5 font-serif text-[18vw] uppercase leading-[0.82] tracking-tight md:text-[11vw] xl:text-[10rem]">
+          Wear the
+          <br />
+          <span className="text-stroke">moment.</span>
+        </h1>
+        <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <p className="max-w-md text-sm leading-relaxed text-ivory/80 md:text-base">
+            Heavyweight essentials, loud graphics and sharp outerwear. Designed in India, built to be lived in.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/shop?sort=newest" className="btn-primary">Shop the drop</Link>
+            <Link href="/inspiration" className="btn-outline-gold">View lookbook</Link>
+          </div>
+        </div>
       </div>
     </section>
   );

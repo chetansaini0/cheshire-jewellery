@@ -1,4 +1,81 @@
-export type UserRole = "CUSTOMER" | "ADMIN" | "SUPPORT";
+export type UserRole = "CUSTOMER" | "SUPPLIER" | "ADMIN" | "SUPER_ADMIN" | "SUPPORT";
+
+export type ProductType = "affiliate" | "dropship" | "marketplace";
+
+export type ProductApprovalStatus =
+  | "draft"
+  | "submitted"
+  | "approved"
+  | "rejected"
+  | "changes_requested"
+  | "live";
+
+export type ProductAvailability = "in_stock" | "out_of_stock" | "unavailable";
+
+export type SupplierStatus = "pending_approval" | "approved" | "rejected" | "suspended" | "changes_requested";
+
+export type AffiliatePartnerStatus = "active" | "inactive";
+
+export type SupplierOrderStatus =
+  | "pending"
+  | "confirmed"
+  | "processing"
+  | "packed"
+  | "shipped"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled"
+  | "return_requested"
+  | "returned"
+  | "refunded";
+
+export type CommissionScope = "global" | "supplier" | "category" | "product" | "collection";
+
+export type ReturnKind = "return" | "replacement" | "refund";
+
+export type ReturnStatus =
+  | "requested"
+  | "approved"
+  | "pickup_scheduled"
+  | "picked_up"
+  | "received"
+  | "inspection"
+  | "refund_initiated"
+  | "refunded"
+  | "rejected";
+
+export type PayoutStatus = "pending" | "processing" | "completed" | "failed" | "on_hold";
+
+export type ImageKind = "main" | "gallery" | "lifestyle" | "video";
+
+export type MediaApprovalStatus = "pending" | "approved" | "rejected";
+
+export type ProductLabel =
+  | "EXCLUSIVE"
+  | "TRENDING"
+  | "NEW"
+  | "BEST_SELLER"
+  | "LIMITED"
+  | "PARTNER_PICK";
+
+export type CommerceEventType =
+  | "order_created"
+  | "payment_successful"
+  | "supplier_order_created"
+  | "supplier_accepted"
+  | "order_packed"
+  | "order_shipped"
+  | "order_delivered"
+  | "return_requested"
+  | "refund_initiated"
+  | "refund_completed"
+  | "affiliate_click"
+  | "affiliate_conversion"
+  | "product_view"
+  | "add_to_cart"
+  | "checkout_started";
+
+export type FulfillmentChannel = "cheshire_checkout" | "affiliate_redirect";
 
 export type OrderStatus =
   | "PLACED"
@@ -28,7 +105,7 @@ export type CouponType =
   | "FREE_SHIPPING"
   | "FIRST_ORDER";
 
-export type ProductBadge = "BESTSELLER" | "NEW" | "LIMITED" | "SALE" | null;
+export type ProductBadge = "BESTSELLER" | "NEW" | "LIMITED" | "SALE" | "EXCLUSIVE" | "TRENDING" | "PARTNER_PICK" | null;
 
 export type Mood =
   | "MINIMAL"
@@ -70,13 +147,13 @@ export type NotificationType =
   | "GENERAL";
 
 export type CategorySlug =
-  | "rings"
-  | "necklaces"
-  | "chains"
-  | "earrings"
-  | "bracelets"
-  | "anklets"
-  | "sets";
+  | "tees"
+  | "hoodies"
+  | "outerwear"
+  | "denim"
+  | "dresses"
+  | "co-ords"
+  | "accessories";
 
 export interface Money {
   amount: number;
@@ -89,6 +166,8 @@ export interface ProductImage {
   alt: string;
   sortOrder: number;
   isPrimary?: boolean;
+  kind?: ImageKind;
+  approved?: boolean;
 }
 
 export interface ProductVariant {
@@ -142,6 +221,17 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   variants?: ProductVariant[];
+  /** Public commerce model. Confidential supplierCost is never included. */
+  productType: ProductType;
+  brandSlug?: string | null;
+  brandName?: string | null;
+  subcategory?: string | null;
+  stoneType?: string | null;
+  weight?: string | null;
+  label?: ProductLabel | null;
+  estimatedDelivery?: string | null;
+  affiliateDisclosure?: boolean;
+  availability?: ProductAvailability;
 }
 
 export interface CartItem {
@@ -151,6 +241,16 @@ export interface CartItem {
   quantity: number;
   product: Product;
   variant?: ProductVariant | null;
+}
+
+export interface CartPartition {
+  affiliate: CartItem[];
+  dropship: CartItem[];
+  marketplace: CartItem[];
+  fulfillable: CartItem[];
+  hasAffiliate: boolean;
+  hasFulfillable: boolean;
+  isMixed: boolean;
 }
 
 export interface Cart {
@@ -190,6 +290,9 @@ export interface OrderItem {
   quantity: number;
   size?: string | null;
   color?: string | null;
+  productType?: ProductType;
+  supplierId?: string | null;
+  fulfillmentChannel?: FulfillmentChannel;
 }
 
 export interface Order {
@@ -209,6 +312,18 @@ export interface Order {
   address: Address;
   createdAt: string;
   updatedAt: string;
+  supplierOrders?: SupplierOrderSummary[];
+  isMixed?: boolean;
+}
+
+export interface SupplierOrderSummary {
+  id: string;
+  supplierId: string;
+  supplierName: string;
+  status: SupplierOrderStatus;
+  itemCount: number;
+  shippingMethod?: string | null;
+  trackingNumber?: string | null;
 }
 
 export interface Review {
@@ -332,6 +447,7 @@ export interface UserProfile {
   name?: string | null;
   avatarUrl?: string | null;
   role: UserRole;
+  supplierId?: string | null;
   rewards: RewardSummary;
   notificationPrefs: {
     orderUpdates: boolean;
@@ -339,4 +455,38 @@ export interface UserProfile {
     promotions: boolean;
     wishlistAlerts: boolean;
   };
+}
+
+export interface AffiliatePartnerPublic {
+  id: string;
+  name: string;
+  slug: string;
+  status: AffiliatePartnerStatus;
+}
+
+export interface SupplierPublic {
+  id: string;
+  brandName: string;
+  slug: string;
+  status: SupplierStatus;
+}
+
+export interface CheckoutAddressInput {
+  fullName: string;
+  phone: string;
+  email?: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country?: string;
+}
+
+export interface OrchestratedCheckout {
+  parentOrder: Order;
+  supplierOrders: SupplierOrderSummary[];
+  affiliateRedirects: Array<{ productId: string; productName: string; trackingId: string }>;
+  cheshireRevenue: number;
+  supplierRevenue: number;
 }

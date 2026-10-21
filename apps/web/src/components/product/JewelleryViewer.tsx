@@ -10,7 +10,7 @@ import { Suspense } from "react";
  */
 function ViewerFallback() {
   return (
-    <div className="flex aspect-square items-center justify-center border border-line bg-[#ebe7df] text-xs tracking-[0.16em] uppercase text-muted">
+    <div className="flex aspect-square items-center justify-center border border-line bg-line text-xs tracking-[0.16em] uppercase text-muted">
       360° / 3D viewer ready
     </div>
   );

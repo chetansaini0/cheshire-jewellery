@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@cheshire/api-client": "*",
+    "@cheshire/commerce": "*",
+    "@cheshire/integrations": "*",
     "@cheshire/config": "*",
     "@cheshire/database": "*",
     "@cheshire/types": "*",

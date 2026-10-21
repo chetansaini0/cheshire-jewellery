@@ -45,7 +45,7 @@ cartRouter.patch("/items/:id", (req, res) => {
   const k = key(req as never);
   const cart = carts.get(k);
   if (!cart) return res.status(404).json({ error: "Cart not found" });
-  const item = cart.items.find((i) => i.id === req.params.id);
+  const item = cart.items.find((i) => i.id === String(req.params.id));
   if (!item) return res.status(404).json({ error: "Item not found" });
   item.quantity = Number(req.body.quantity || 1);
   carts.set(k, cart);
@@ -56,7 +56,7 @@ cartRouter.delete("/items/:id", (req, res) => {
   const k = key(req as never);
   const cart = carts.get(k);
   if (!cart) return res.status(404).json({ error: "Cart not found" });
-  cart.items = cart.items.filter((i) => i.id !== req.params.id);
+  cart.items = cart.items.filter((i) => i.id !== String(req.params.id));
   carts.set(k, cart);
   return res.json({ ok: true });
 });

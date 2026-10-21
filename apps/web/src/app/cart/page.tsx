@@ -11,7 +11,7 @@ export default function CartPage() {
   const removeFromCart = useCommerceStore((s) => s.removeFromCart);
   const applyCoupon = useCommerceStore((s) => s.applyCoupon);
   const couponCode = useCommerceStore((s) => s.couponCode);
-  const { subtotal, shipping, discount, total, amountToFreeShipping } = useCartTotals();
+  const { subtotal, shipping, discount, total, amountToFreeShipping, partition } = useCartTotals();
 
   return (
     <div className="mx-auto max-w-site px-4 py-12 sm:px-6 lg:px-10">
@@ -28,12 +28,15 @@ export default function CartPage() {
           <ul className="space-y-6">
             {cart.map((item) => (
               <li key={item.id} className="flex gap-4 border-b border-line pb-6">
-                <div className="relative h-28 w-24 overflow-hidden bg-[#ebe7df]">
+                <div className="relative h-28 w-24 overflow-hidden bg-line">
                   <Image src={getPrimaryImage(item.product)} alt="" fill className="object-cover" />
                 </div>
                 <div className="flex-1">
                   <Link href={`/products/${item.product.slug}`}>{item.product.name}</Link>
                   <p className="text-sm text-muted">{item.variantLabel}</p>
+                  {item.product.productType === "affiliate" ? (
+                    <p className="mt-1 text-xs tracking-[0.12em] uppercase text-gold-deep">Partner piece</p>
+                  ) : null}
                   <p className="mt-1">{formatINR(item.product.price)}</p>
                   <div className="mt-3 flex items-center gap-3">
                     <button type="button" onClick={() => updateQty(item.id, item.quantity - 1)}>
@@ -61,6 +64,11 @@ export default function CartPage() {
                 ? `₹${amountToFreeShipping} away from free shipping`
                 : "Free shipping unlocked"}
             </p>
+            {partition.hasAffiliate ? (
+              <p className="mt-3 text-xs leading-relaxed text-muted">
+                Partner items are completed on the partner label’s site. Cheshire checkout covers the rest of your bag.
+              </p>
+            ) : null}
             <form
               className="mt-4 flex gap-2"
               onSubmit={(e) => {
@@ -99,7 +107,7 @@ export default function CartPage() {
             </div>
             <Link
               href="/checkout"
-              className="mt-6 block bg-ink py-3 text-center text-[11px] tracking-[0.16em] uppercase text-ivory"
+              className="mt-6 block bg-gold py-3 text-center text-[11px] tracking-[0.16em] uppercase text-ink hover:bg-gold-deep hover:text-ivory"
             >
               Checkout
             </Link>

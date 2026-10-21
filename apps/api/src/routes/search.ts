@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { seedProducts } from "@cheshire/database/catalog";
+import { seedProducts } from "@cheshire/database";
 
 export const searchRouter = Router();
 
@@ -15,7 +15,7 @@ searchRouter.get("/", (req, res) => {
     .slice(0, 10);
   res.json({
     products,
-    categories: ["rings", "necklaces", "earrings", "bracelets"],
-    popular: ["silver ring", "minimal necklace", "gift under 2000", "black jewellery"],
+    categories: ["tees", "hoodies", "denim", "dresses"],
+    popular: ["oversized tee", "baggy jeans", "black hoodie", "gift under 2000"],
   });
 });

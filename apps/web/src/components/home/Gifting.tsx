@@ -12,7 +12,7 @@ export function Gifting() {
           <Link
             key={g.slug}
             href={g.href}
-            className="border border-line px-5 py-8 text-center text-[12px] tracking-[0.18em] uppercase transition hover:border-ink hover:bg-ink hover:text-ivory"
+            className="border border-gold/40 px-5 py-8 text-center text-[12px] tracking-[0.18em] uppercase transition hover:border-gold hover:bg-gold hover:text-ink"
             data-cursor="shop"
           >
             {g.name}

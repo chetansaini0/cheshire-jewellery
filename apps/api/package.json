@@ -9,6 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@cheshire/commerce": "*",
+    "@cheshire/integrations": "*",
     "@cheshire/database": "*",
     "@cheshire/types": "*",
     "@cheshire/utils": "*",

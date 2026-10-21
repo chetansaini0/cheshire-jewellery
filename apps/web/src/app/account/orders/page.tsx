@@ -25,7 +25,7 @@ export default function OrdersPage() {
             <li key={step} className="flex items-center gap-3 text-sm">
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${
-                  i <= 3 ? "border-ink bg-ink text-ivory" : "border-line text-muted"
+                  i <= 3 ? "border-gold bg-gold text-ink" : "border-line text-muted"
                 }`}
               >
                 {i + 1}

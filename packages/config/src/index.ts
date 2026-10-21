@@ -1,27 +1,30 @@
 export const brand = {
   name: "CHESHIRE",
-  tagline: "LUXURY WITHOUT TRYING TOO HARD.",
-  philosophy: "Jewellery designed for the moments that become memories.",
+  tagline: "WEAR THE MOMENT.",
+  philosophy: "Streetwear with intention. Heavyweight essentials, bold drops and clothes made to be lived in.",
   domain: "cheshire.com",
   supportEmail: "care@cheshire.com",
   supportWhatsApp: "+919876543210",
-  bundleId: "com.cheshire.jewellery",
+  bundleId: "com.cheshire.clothing",
 } as const;
 
 export const colors = {
-  ivory: "#F7F5F0",
-  softBlack: "#111111",
-  charcoal: "#242424",
-  metallic: "#B8B8B8",
+  ivory: "#F4F3EF",
+  gold: "#D7FF3A",
+  goldSoft: "#ECFFA6",
+  goldDeep: "#0A0A0A",
+  softBlack: "#0A0A0A",
+  charcoal: "#1A1A1A",
+  metallic: "#D7FF3A",
   white: "#FFFFFF",
   muted: "#6B6B6B",
-  border: "#E6E2DA",
-  sale: "#8B1E1E",
+  border: "#E4E4E0",
+  sale: "#FF3B1F",
 } as const;
 
 export const typography = {
-  serif: "Cormorant Garamond, Georgia, serif",
-  sans: "Manrope, system-ui, sans-serif",
+  serif: "Archivo Black, Impact, sans-serif",
+  sans: "Inter, system-ui, sans-serif",
 } as const;
 
 export const nav = {
@@ -29,8 +32,8 @@ export const nav = {
     { label: "SHOP", href: "/shop" },
     { label: "NEW IN", href: "/shop?sort=newest" },
     { label: "BESTSELLERS", href: "/shop?sort=bestselling" },
-    { label: "COLLECTIONS", href: "/collections" },
-    { label: "INSPIRATION", href: "/inspiration" },
+    { label: "DROPS", href: "/collections" },
+    { label: "LOOKBOOK", href: "/inspiration" },
     { label: "GIFTS", href: "/gifts" },
     { label: "ABOUT", href: "/about" },
   ],
@@ -43,21 +46,22 @@ export const nav = {
 } as const;
 
 export const categories = [
-  { slug: "rings", name: "RINGS", href: "/shop/rings" },
-  { slug: "necklaces", name: "NECKLACES", href: "/shop/necklaces" },
-  { slug: "earrings", name: "EARRINGS", href: "/shop/earrings" },
-  { slug: "bracelets", name: "BRACELETS", href: "/shop/bracelets" },
-  { slug: "anklets", name: "ANKLETS", href: "/shop/anklets" },
-  { slug: "sets", name: "SETS", href: "/shop/sets" },
+  { slug: "tees", name: "TEES", href: "/shop/tees" },
+  { slug: "hoodies", name: "HOODIES", href: "/shop/hoodies" },
+  { slug: "outerwear", name: "OUTERWEAR", href: "/shop/outerwear" },
+  { slug: "denim", name: "DENIM", href: "/shop/denim" },
+  { slug: "dresses", name: "DRESSES", href: "/shop/dresses" },
+  { slug: "co-ords", name: "CO-ORDS", href: "/shop/co-ords" },
+  { slug: "accessories", name: "ACCESSORIES", href: "/shop/accessories" },
 ] as const;
 
 export const moods = [
-  { slug: "minimal", name: "MINIMAL", copy: "Quiet lines. Loud presence." },
-  { slug: "bold", name: "BOLD", copy: "Made to be noticed." },
-  { slug: "romantic", name: "ROMANTIC", copy: "Soft edge, hard to forget." },
-  { slug: "dark", name: "DARK", copy: "Night energy. Day confidence." },
-  { slug: "everyday", name: "EVERYDAY", copy: "Luxury that lives with you." },
-  { slug: "statement", name: "STATEMENT", copy: "One piece. Whole look." },
+  { slug: "minimal", name: "MINIMAL", copy: "Clean lines. No noise." },
+  { slug: "bold", name: "BOLD", copy: "Colour, graphics, volume." },
+  { slug: "romantic", name: "ROMANTIC", copy: "Soft fabrics, easy shapes." },
+  { slug: "dark", name: "DARK", copy: "Black on black on black." },
+  { slug: "everyday", name: "EVERYDAY", copy: "Built for repeat wear." },
+  { slug: "statement", name: "STATEMENT", copy: "One piece. Whole fit." },
 ] as const;
 
 export const giftCategories = [
@@ -81,23 +85,22 @@ export const orderTimeline = [
 export const freeShippingThreshold = 999;
 
 export const seoDefaults = {
-  titleTemplate: "%s · CHESHIRE Jewellery",
-  defaultTitle: "CHESHIRE Jewellery — Wear Your Story",
+  titleTemplate: "%s · CHESHIRE",
+  defaultTitle: "CHESHIRE — Wear The Moment | Streetwear & Clothing",
   description:
-    "Contemporary aesthetic jewellery for people who treat jewellery as part of their identity. Luxury without trying too hard.",
+    "CHESHIRE — wear the moment. Heavyweight tees, hoodies, outerwear, denim, dresses and co-ords. New drops every week.",
   siteUrl: "https://www.cheshire.com",
-  twitterHandle: "@cheshirejewellery",
+  twitterHandle: "@cheshireclothing",
   keywords: [
-    "aesthetic jewellery",
-    "minimal jewellery",
-    "premium jewellery",
-    "trendy jewellery",
-    "fashion jewellery",
-    "everyday jewellery",
-    "statement jewellery",
-    "jewellery online",
-    "gifts for her",
-    "gifts for him",
-    "CHESHIRE Jewellery",
+    "streetwear",
+    "oversized tees",
+    "hoodies",
+    "baggy jeans",
+    "co-ord sets",
+    "dresses online",
+    "outerwear",
+    "clothing brand india",
+    "new drops",
+    "CHESHIRE Clothing",
   ],
 } as const;

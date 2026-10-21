@@ -10,7 +10,7 @@ ordersRouter.get("/", (_req, res) => {
 });
 
 ordersRouter.get("/:id", (req, res) => {
-  const order = orders.find((o) => o.id === req.params.id || o.orderNumber === req.params.id);
+  const order = orders.find((o) => o.id === String(req.params.id) || o.orderNumber === String(req.params.id));
   if (!order) return res.status(404).json({ error: "Not found" });
   return res.json(order);
 });
