@@ -3,6 +3,9 @@ import type { CategoryMapping, MaterialMapping, StatusMapping } from "./types";
 import type { SupplierOrderStatus } from "@cheshire/types";
 
 const CATEGORY_HINTS: Array<[RegExp, CategorySlug]> = [
+  [/lehenga|ghagra|chaniya/i, "lehengas"],
+  [/saree|sari\b/i, "sarees"],
+  [/salwar|anarkali|kurta set|sharara|churidar|suit set/i, "suits"],
   [/hood|sweat|fleece/i, "hoodies"],
   [/jean|denim/i, "denim"],
   [/tee|t-shirt|tshirt|shirt|top/i, "tees"],
@@ -13,6 +16,11 @@ const CATEGORY_HINTS: Array<[RegExp, CategorySlug]> = [
 ];
 
 const MATERIAL_HINTS: Array<[RegExp, string]> = [
+  [/banarasi/i, "Banarasi Silk"],
+  [/chanderi/i, "Chanderi Silk"],
+  [/georgette/i, "Georgette"],
+  [/chiffon/i, "Chiffon"],
+  [/silk/i, "Silk"],
   [/organic/i, "Organic Cotton"],
   [/cotton/i, "Cotton"],
   [/denim/i, "Cotton Denim"],

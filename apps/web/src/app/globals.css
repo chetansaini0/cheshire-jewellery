@@ -98,3 +98,8 @@ img {
     @apply shrink-0 border-b border-current pb-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] after:ml-1 after:content-['→'];
   }
 }
+
+.text-stroke-ink {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--ink);
+}

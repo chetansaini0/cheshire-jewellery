@@ -153,7 +153,10 @@ export type CategorySlug =
   | "denim"
   | "dresses"
   | "co-ords"
-  | "accessories";
+  | "accessories"
+  | "lehengas"
+  | "sarees"
+  | "suits";
 
 export interface Money {
   amount: number;

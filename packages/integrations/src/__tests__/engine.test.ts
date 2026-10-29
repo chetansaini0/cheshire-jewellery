@@ -72,6 +72,10 @@ describe("mappings", () => {
     ], "s");
     assert.equal(mapped, "hoodies");
     assert.equal(mapCategory("Jeans", [], "s"), "denim");
+    assert.equal(mapCategory("Bridal Lehenga", [], "s"), "lehengas");
+    assert.equal(mapCategory("Banarasi Saree", [], "s"), "sarees");
+    assert.equal(mapCategory("Anarkali Set", [], "s"), "suits");
+    assert.equal(mapMaterial("Pure chanderi weave", []), "Chanderi Silk");
     assert.equal(mapMaterial("Organic cotton jersey", []), "Organic Cotton");
     assert.equal(mapOrderStatus("dispatched", [], "s"), "shipped");
   });

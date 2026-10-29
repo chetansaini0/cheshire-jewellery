@@ -15,7 +15,7 @@ searchRouter.get("/", (req, res) => {
     .slice(0, 10);
   res.json({
     products,
-    categories: ["tees", "hoodies", "denim", "dresses"],
-    popular: ["oversized tee", "baggy jeans", "black hoodie", "gift under 2000"],
+    categories: ["tees", "hoodies", "denim", "dresses", "lehengas", "sarees", "suits"],
+    popular: ["oversized tee", "baggy jeans", "bridal lehenga", "banarasi saree", "anarkali suit"],
   });
 });

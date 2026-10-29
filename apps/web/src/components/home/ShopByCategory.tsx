@@ -10,7 +10,7 @@ export function ShopByCategory() {
         <h2 className="section-title">Shop by<br className="sm:hidden" /> category</h2>
         <Link href="/shop" className="link-arrow">View all</Link>
       </div>
-      <div className="no-scrollbar -mx-4 mt-8 flex snap-x gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:px-0 lg:grid-cols-7">
+      <div className="no-scrollbar -mx-4 mt-8 flex snap-x gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0">
         {categories.map((cat) => {
           const meta = categoryMeta.find((c) => c.slug === cat.slug);
           return (
@@ -22,7 +22,7 @@ export function ShopByCategory() {
                     alt={cat.name}
                     fill
                     className="object-cover transition duration-700 ease-luxe group-hover:scale-105"
-                    sizes="(max-width:768px) 42vw, 15vw"
+                    sizes="(max-width:768px) 42vw, 20vw"
                   />
                 ) : null}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />

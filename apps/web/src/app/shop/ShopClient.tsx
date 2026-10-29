@@ -6,7 +6,7 @@ import type { CategorySlug, Mood, SortOption } from "@cheshire/types";
 import { getProducts } from "@/lib/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
 
-const categoryTabs = ["all", "tees", "hoodies", "outerwear", "denim", "dresses", "co-ords", "accessories"] as const;
+const categoryTabs = ["all", "tees", "hoodies", "outerwear", "denim", "dresses", "co-ords", "lehengas", "sarees", "suits", "accessories"] as const;
 const sorts: { value: SortOption; label: string }[] = [
   { value: "recommended", label: "Recommended" },
   { value: "newest", label: "Newest" },
@@ -159,7 +159,7 @@ function Filters({
   sort: SortOption;
   setSort: (s: SortOption) => void;
 }) {
-  const materialOptions = ["Cotton", "Denim", "Fleece", "Leather", "Wool"];
+  const materialOptions = ["Cotton", "Denim", "Fleece", "Leather", "Wool", "Silk", "Georgette", "Chanderi"];
   return (
     <div className="space-y-8">
       <div className="lg:hidden">

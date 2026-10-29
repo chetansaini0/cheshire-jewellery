@@ -203,6 +203,9 @@ export function getComplementary(product: Product, limit = 4): Product[] {
     dresses: ["outerwear", "accessories"],
     "co-ords": ["accessories", "tees"],
     accessories: ["tees", "hoodies"],
+    lehengas: ["sarees", "suits"],
+    sarees: ["lehengas", "suits"],
+    suits: ["sarees", "lehengas"],
   };
   const targets = complementMap[product.category] ?? ["tees"];
   return catalog

@@ -7,7 +7,7 @@ import { useUI } from "@/components/providers/UIProvider";
 import { catalog } from "@/lib/catalog";
 import { formatINR } from "@cheshire/utils";
 
-const popular = ["oversized tee", "baggy jeans", "black hoodie", "track set", "gift under 2000"];
+const popular = ["oversized tee", "baggy jeans", "bridal lehenga", "banarasi saree", "anarkali suit"];
 
 export function SearchOverlay() {
   const { searchOpen, setSearchOpen } = useUI();
