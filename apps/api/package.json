@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@cheshire/commerce": "*",
+    "@cheshire/config": "*",
     "@cheshire/integrations": "*",
     "@cheshire/database": "*",
     "@cheshire/types": "*",

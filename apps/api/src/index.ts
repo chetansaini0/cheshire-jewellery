@@ -17,6 +17,7 @@ import { searchRouter } from "./routes/search";
 import { affiliateRouter } from "./routes/affiliate";
 import { suppliersRouter } from "./routes/suppliers";
 import { integrationsRouter } from "./routes/integrations";
+import { contentRouter } from "./routes/content";
 import { startIntegrationWorker } from "@cheshire/integrations";
 
 const app = express();
@@ -58,6 +59,7 @@ app.use("/api/commerce", commerceRouter);
 app.use("/api/affiliate", affiliateRouter);
 app.use("/api/suppliers", suppliersRouter);
 app.use("/api/integrations", integrationsRouter);
+app.use("/api/content", contentRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);

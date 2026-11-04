@@ -1,0 +1,128 @@
+/**
+ * Server-only banner store shared by the admin (writer) and the storefront (reader).
+ *
+ * Source of truth, in order:
+ *   1. `<repo>/.data/hero-banners.json` — written by Admin → Banners (gitignored, local/self-hosted only)
+ *   2. `heroBanners` in ./index.ts — the committed defaults (what Vercel builds with)
+ *
+ * Never import this from a client component: it uses node:fs.
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { heroBanners, type HeroBanner } from "./index";
+import { asStoreError, isReadOnlyDataStore, ReadOnlyStoreError, resolveRepoDataDir } from "./data-dir";
+
+export { resolveRepoDataDir, isReadOnlyDataStore, ReadOnlyStoreError };
+
+export const BANNER_FILE_NAME = "hero-banners.json";
+export const MAX_ACTIVE_BANNERS = 5;
+
+export function bannerFilePath() {
+  return path.join(resolveRepoDataDir(), BANNER_FILE_NAME);
+}
+
+const isStr = (v: unknown, max = 200): v is string => typeof v === "string" && v.trim().length > 0 && v.length <= max;
+const isHref = (v: unknown): v is string => isStr(v, 300) && (v.startsWith("/") || v.startsWith("https://"));
+const isImageId = (v: unknown): v is string =>
+  isStr(v, 300) && (/^photo-[\w-]+$/.test(v) || /^px:\d+$/.test(v));
+
+export type BannerValidation = { ok: true; banner: HeroBanner } | { ok: false; errors: string[] };
+
+/** Validate untrusted input (admin form / API body) into a HeroBanner. */
+export function validateBanner(input: unknown): BannerValidation {
+  const errors: string[] = [];
+  const b = (input ?? {}) as Record<string, unknown>;
+  const cta = (b.cta ?? {}) as Record<string, unknown>;
+  const sec = b.secondaryCta as Record<string, unknown> | undefined;
+  if (!isStr(b.id, 60) || !/^[a-z0-9-]+$/.test(b.id)) errors.push("id must be lowercase letters, numbers and dashes");
+  if (!isStr(b.eyebrow, 80)) errors.push("eyebrow is required (max 80)");
+  if (!isStr(b.headline, 40)) errors.push("headline is required (max 40)");
+  if (!isStr(b.accent, 40)) errors.push("accent line is required (max 40)");
+  if (!isStr(b.supporting, 240)) errors.push("supporting copy is required (max 240)");
+  if (!isStr(cta.label, 40) || !isHref(cta.href)) errors.push("primary CTA needs a label and a link starting with / or https://");
+  if (sec && (sec.label || sec.href) && (!isStr(sec.label, 40) || !isHref(sec.href)))
+    errors.push("secondary CTA needs both a label and a valid link");
+  const ids = Array.isArray(b.imageIds) ? b.imageIds.filter((x) => typeof x === "string" && x.trim()) : [];
+  if (ids.length < 1 || ids.length > 2 || !ids.every(isImageId))
+    errors.push("1–2 images required: Unsplash photo-… or Pexels px:<id> (hosts allowed by the storefront)");
+  if (b.theme !== "dark" && b.theme !== "lime") errors.push("theme must be dark or lime");
+  const sortOrder = Number(b.sortOrder);
+  if (!Number.isFinite(sortOrder)) errors.push("sortOrder must be a number");
+  if (errors.length) return { ok: false, errors };
+  const banner: HeroBanner = {
+    id: String(b.id),
+    eyebrow: String(b.eyebrow).trim(),
+    headline: String(b.headline).trim(),
+    accent: String(b.accent).trim(),
+    supporting: String(b.supporting).trim(),
+    cta: { label: String(cta.label).trim(), href: String(cta.href).trim() },
+    imageIds: ids.slice(0, 2) as HeroBanner["imageIds"],
+    theme: b.theme as HeroBanner["theme"],
+    isActive: Boolean(b.isActive),
+    sortOrder,
+  };
+  if (sec && sec.label && sec.href) banner.secondaryCta = { label: String(sec.label).trim(), href: String(sec.href).trim() };
+  return { ok: true, banner };
+}
+
+/** Renumber sortOrder 1..n in current order. */
+export function normaliseOrder(list: HeroBanner[]): HeroBanner[] {
+  return [...list].sort((a, b) => a.sortOrder - b.sortOrder).map((b, i) => ({ ...b, sortOrder: i + 1 }));
+}
+
+export function validateBannerList(input: unknown): { ok: true; banners: HeroBanner[] } | { ok: false; errors: string[] } {
+  if (!Array.isArray(input)) return { ok: false, errors: ["banners must be an array"] };
+  const errors: string[] = [];
+  const out: HeroBanner[] = [];
+  input.forEach((raw, i) => {
+    const r = validateBanner(raw);
+    if (r.ok) out.push(r.banner);
+    else errors.push(...r.errors.map((e) => `#${i + 1}: ${e}`));
+  });
+  const ids = new Set(out.map((b) => b.id));
+  if (ids.size !== out.length) errors.push("banner ids must be unique");
+  if (out.filter((b) => b.isActive).length > MAX_ACTIVE_BANNERS)
+    errors.push(`at most ${MAX_ACTIVE_BANNERS} banners can be active at once`);
+  return errors.length ? { ok: false, errors } : { ok: true, banners: normaliseOrder(out) };
+}
+
+export type BannerSource = "file" | "config";
+
+/** All banners (active + hidden), sorted. Falls back to committed config if no valid file. */
+export function readAllHeroBanners(file = bannerFilePath()): { banners: HeroBanner[]; source: BannerSource } {
+  try {
+    if (fs.existsSync(file)) {
+      const parsed = validateBannerList(JSON.parse(fs.readFileSync(file, "utf8")));
+      if (parsed.ok) return { banners: parsed.banners, source: "file" };
+    }
+  } catch {
+    /* fall through to defaults */
+  }
+  return { banners: normaliseOrder(heroBanners), source: "config" };
+}
+
+/** Active banners only, in display order — what the storefront carousel renders. */
+export function readHeroBanners(file?: string): HeroBanner[] {
+  return readAllHeroBanners(file).banners.filter((b) => b.isActive);
+}
+
+export function writeHeroBanners(list: unknown, file = bannerFilePath()) {
+  const parsed = validateBannerList(list);
+  if (!parsed.ok) return parsed;
+  if (isReadOnlyDataStore()) throw new ReadOnlyStoreError();
+  try {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    const tmp = `${file}.${process.pid}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(parsed.banners, null, 2), "utf8");
+    fs.renameSync(tmp, file);
+  } catch (e) {
+    throw asStoreError(e);
+  }
+  return parsed;
+}
+
+/** Delete the local override so the storefront goes back to the committed defaults. */
+export function resetHeroBanners(file = bannerFilePath()) {
+  if (isReadOnlyDataStore()) throw new ReadOnlyStoreError();
+  if (fs.existsSync(file)) fs.rmSync(file);
+}

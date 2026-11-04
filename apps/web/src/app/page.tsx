@@ -8,10 +8,13 @@ import { Campaign } from "@/components/home/Campaign";
 import { ClubSignup } from "@/components/home/ClubSignup";
 import { WhyCheshire } from "@/components/home/WhyCheshire";
 import { getBestsellers, getNewDrops } from "@/lib/catalog";
+import { readHeroBanners } from "@cheshire/config/banner-store";
 
 export default function HomePage() {
   const newDrops = getNewDrops(8);
   const bestsellers = getBestsellers(10);
+  // Admin → Banners writes .data/hero-banners.json locally; Vercel builds use the committed defaults.
+  const banners = readHeroBanners();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -25,7 +28,7 @@ export default function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Hero />
+      <Hero banners={banners} />
       <div className="border-y border-ink bg-gold py-4 text-ink">
         <Marquee
           items={["Heavyweight tees", "Baggy denim", "Track sets", "Outerwear", "New drop Fridays", "Made in India"]}

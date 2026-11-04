@@ -3,13 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { heroBanners } from "@cheshire/config";
+import { heroBanners, type HeroBanner } from "@cheshire/config";
 import { productImage } from "@cheshire/database/catalog";
 
 const INTERVAL_MS = 6000;
 
-export function Hero() {
-  const slides = heroBanners.filter((b) => b.isActive).sort((a, b) => a.sortOrder - b.sortOrder);
+/**
+ * `banners` comes from the server (page.tsx → @cheshire/config/banner-store), which reads the
+ * admin-managed `.data/hero-banners.json` when present and falls back to the committed config.
+ */
+export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
+  const slides = banners.filter((b) => b.isActive).sort((a, b) => a.sortOrder - b.sortOrder);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);

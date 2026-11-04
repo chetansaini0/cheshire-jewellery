@@ -1,62 +1,37 @@
 import type { Metadata } from "next";
+import { Anton, Inter } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+import { AdminShell } from "@/components/AdminShell";
+import { FeedbackProvider } from "@/components/feedback";
+import { authMode } from "@/lib/auth";
+import { isReadOnlyDataStore } from "@/lib/store";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const anton = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton", display: "swap" });
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "CHESHIRE Admin",
-  description: "CMS and commerce operations for CHESHIRE",
+  title: { default: "CHESHIRE Admin", template: "%s · CHESHIRE Admin" },
+  description: "Catalogue, orders and content operations for CHESHIRE",
+  robots: { index: false, follow: false },
 };
 
-const nav = [
-  { href: "/", label: "Dashboard" },
-  { href: "/products", label: "Products" },
-  { href: "/orders", label: "Orders" },
-  { href: "/suppliers", label: "Suppliers" },
-  { href: "/integrations", label: "Supplier hub" },
-  { href: "/sync-logs", label: "Sync logs" },
-  { href: "/integrations/errors", label: "Integration errors" },
-  { href: "/affiliates", label: "Affiliate partners" },
-  { href: "/customers", label: "Customers" },
-  { href: "/payments", label: "Payments" },
-  { href: "/commissions", label: "Commissions" },
-  { href: "/payouts", label: "Payouts" },
-  { href: "/returns", label: "Returns" },
-  { href: "/refunds", label: "Refunds" },
-  { href: "/reviews", label: "Reviews" },
-  { href: "/coupons", label: "Coupons" },
-  { href: "/inventory", label: "Inventory" },
-  { href: "/content", label: "Banners" },
-  { href: "/collections", label: "Collections" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
-  { href: "/rewards", label: "Rewards" },
-  { href: "/notifications", label: "Notifications" },
-];
+// Applies the saved theme before paint so there is no light→dark flash.
+const themeScript = `try{var t=localStorage.getItem("ch-admin-theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${anton.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
-        <div className="min-h-screen lg:grid lg:grid-cols-[240px_1fr]">
-          <aside className="border-b border-line bg-white lg:border-b-0 lg:border-r">
-            <div className="px-5 py-5">
-              <p className="font-serif text-lg tracking-[0.18em] text-gold-deep">CHESHIRE</p>
-              <p className="mt-1 text-[10px] tracking-[0.2em] uppercase text-gold">Admin / CMS</p>
-            </div>
-            <nav className="flex gap-2 overflow-x-auto px-3 pb-4 no-scrollbar lg:block lg:space-y-1">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block whitespace-nowrap px-3 py-2 text-sm text-muted hover:bg-ivory hover:text-ink"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </aside>
-          <main className="px-4 py-6 sm:px-8">{children}</main>
-        </div>
+        <FeedbackProvider>
+          <AdminShell readOnly={isReadOnlyDataStore()} authEnabled={authMode() === "on"}>
+            {children}
+          </AdminShell>
+        </FeedbackProvider>
       </body>
     </html>
   );

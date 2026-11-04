@@ -25,7 +25,7 @@
     "db:studio": "npm run studio --workspace=@cheshire/database",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm test --workspace=@cheshire/integrations"
+    "test": "npm test --workspace=@cheshire/integrations && npm test --workspace=@cheshire/config"
   },
   "engines": {
     "node": ">=20"

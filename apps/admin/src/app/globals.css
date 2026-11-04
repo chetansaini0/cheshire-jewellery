@@ -2,13 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg: 244 243 239;
+  --surface: 255 255 255;
+  --ink: 10 10 10;
+  --line: 226 224 216;
+  --muted: 107 107 102;
+  --lime-ink: 74 92 0;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: 10 10 10;
+  --surface: 20 20 20;
+  --ink: 244 243 239;
+  --line: 40 40 40;
+  --muted: 154 154 148;
+  --lime-ink: 215 255 58;
+  color-scheme: dark;
+}
+
 body {
-  background: #f7f5f0;
-  color: #1c1914;
-  font-family: Manrope, system-ui, sans-serif;
+  background: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Older pages use bg-white for panels; keep them readable in dark mode. */
+.dark .bg-white {
+  background-color: rgb(var(--surface));
 }
 
 ::selection {
-  background: #c6a35a;
-  color: #f7f5f0;
+  background: #d7ff3a;
+  color: #0a0a0a;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-ink focus:ring-2 focus:ring-lime/60;
+  }
+  .label {
+    @apply mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-ink text-bg hover:bg-ink/85;
+  }
+  .btn-lime {
+    @apply btn bg-lime text-[#0a0a0a] hover:brightness-95;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-surface text-ink hover:border-ink;
+  }
+  .btn-danger {
+    @apply btn border border-red-500/40 text-red-600 hover:bg-red-500/10 dark:text-red-400;
+  }
+  .card {
+    @apply rounded-xl border border-line bg-surface;
+  }
+  .th {
+    @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted;
+  }
+  .td {
+    @apply px-4 py-3 align-middle;
+  }
 }
