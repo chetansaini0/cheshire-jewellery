@@ -72,7 +72,12 @@ export function validateBanner(input: unknown): BannerValidation {
     banner.image = image;
     const w = Number(size.width);
     const h = Number(size.height);
-    banner.imageSize = w > 0 && h > 0 && w < 10000 && h < 10000 ? { width: Math.round(w), height: Math.round(h) } : { width: 1168, height: 784 };
+    const ec = b.edgeColors as { left?: unknown; right?: unknown } | undefined;
+    const hexList = (v: unknown) => (Array.isArray(v) && v.length > 0 && v.length <= 8 && v.every((c) => typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c)) ? (v as string[]) : null);
+    const left = hexList(ec?.left);
+    const right = hexList(ec?.right);
+    if (left && right) banner.edgeColors = { left, right };
+    banner.imageSize = w > 0 && h > 0 && w < 10000 && h < 10000 ? { width: Math.round(w), height: Math.round(h) } : { width: 2880, height: 1440 };
   }
   if (sec && sec.label && sec.href) banner.secondaryCta = { label: String(sec.label).trim(), href: String(sec.href).trim() };
   return { ok: true, banner };

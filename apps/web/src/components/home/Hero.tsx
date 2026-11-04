@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { heroBanners, type HeroBanner } from "@cheshire/config";
 import { productImage } from "@cheshire/database/catalog";
 
@@ -10,14 +10,30 @@ import { productImage } from "@cheshire/database/catalog";
 const INTERVAL_MS = 6000;
 
 /** Accessible name for a slide: the headline as it reads on the artwork. */
-/** Stage height: full-width 3:2 on phones; on larger screens shrink so banner + controls fit the first screen. */
-const STAGE_HEIGHT = "min(66.6667vw, max(240px, calc(100svh - 170px)), 840px)";
+/**
+ * Full-bleed 2:1 stage. Height = min(50vw, viewport − announcement bar − header − controls). The artwork is
+ * always shown whole (object-contain): several banners carry text close to the top/bottom edge, so cropping
+ * would cut letters. When the screen is wider than 2:1 the small side gaps are filled with the artwork's own
+ * edge colours, so it still reads as edge-to-edge. On phones the height is exactly 50vw (no gaps at all).
+ */
+const STAGE_HEIGHT = "min(50vw, max(240px, calc(100svh - 170px)))";
+
+/** Letterbox fill: left half / right half gradients sampled from the artwork's edges. */
+const edgeFill = (b: HeroBanner): CSSProperties | undefined =>
+  b.edgeColors
+    ? {
+        backgroundImage: `linear-gradient(to bottom, ${b.edgeColors.left.join(", ")}), linear-gradient(to bottom, ${b.edgeColors.right.join(", ")})`,
+        backgroundSize: "50% 100%, 50% 100%",
+        backgroundPosition: "left top, right top",
+        backgroundRepeat: "no-repeat",
+      }
+    : undefined;
 
 const slideTitle = (b: HeroBanner) => `${b.headline} ${b.accent}`.replace(/\s+/g, " ").trim();
 
 /**
  * Homepage hero carousel. Slides with `image` are finished artwork (text + "Shop now" baked in): shown whole
- * at 3:2 with object-contain and linked to `cta.href`. Slides without one fall back to the editorial text layout.
+ * full-bleed at 2:1 and linked to `cta.href`. Slides without one fall back to the editorial text layout.
  * `banners` comes from the server (page.tsx → @cheshire/config/banner-store): the admin-managed
  * `.data/hero-banners.json` when present, otherwise the committed defaults.
  */
@@ -66,25 +82,11 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
       <h1 className="sr-only">Cheshire — Roots. Remixed.</h1>
       {imageMode ? (
         /*
-         * Image stage. Height = min(width × 2/3, viewport − announcement bar − header − controls), capped so
-         * native 1168×784 artwork is never blown up much. The 3:2 banner sits centred and is never cropped
-         * (object-contain); leftover side space is filled with a soft, blurred copy of the same banner.
-         * Height comes from CSS alone, so the space is reserved before images load (no layout shift).
+         * Full-bleed image stage (see STAGE_HEIGHT). Height comes from CSS alone, so the space is reserved
+         * before images load (no layout shift).
          */
-        <div className="relative isolate overflow-hidden bg-ivory" style={{ height: STAGE_HEIGHT }}>
-          {slides.map((b, i) => (
-            <div
-              key={`bg-${b.id}`}
-              aria-hidden
-              className={`absolute inset-0 -z-10 transition-opacity duration-[900ms] motion-reduce:transition-none ${i === index ? "opacity-100" : "opacity-0"}`}
-            >
-              {Math.abs(i - index) <= 1 || i === 0 ? (
-                <Image src={b.image!} alt="" fill sizes="64px" quality={40} className="scale-125 object-cover opacity-70 blur-2xl saturate-[.85]" />
-              ) : null}
-              <div className="absolute inset-0 bg-ivory/35" />
-            </div>
-          ))}
-          <div className="relative mx-auto grid h-full max-w-full" style={{ aspectRatio: "3 / 2" }}>
+        <div className="relative overflow-hidden bg-ivory" style={{ height: STAGE_HEIGHT }}>
+          <div className="grid h-full w-full">
             {slides.map((b, i) => {
               const active = i === index;
               const size = b.imageSize ?? { width: 1168, height: 784 };
@@ -95,6 +97,7 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
                   aria-roledescription="slide"
                   aria-label={`${i + 1} of ${count}: ${slideTitle(b)}`}
                   aria-hidden={!active}
+                  style={edgeFill(b)}
                   className={`col-start-1 row-start-1 h-full min-h-0 transition-opacity duration-[900ms] ease-luxe motion-reduce:transition-none ${
                     active ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
                   }`}
@@ -112,8 +115,8 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
                       priority={i === 0}
                       loading={i === 0 ? undefined : "lazy"}
                       fetchPriority={i === 0 ? "high" : "low"}
-                      sizes="(max-width: 1260px) 100vw, 1260px"
-                      className="h-full w-full object-contain lg:shadow-lift"
+                      sizes="100vw"
+                      className="h-full w-full object-contain object-center"
                     />
                   </Link>
                 </div>

@@ -140,8 +140,10 @@ export type HeroBanner = {
    * served from the app's /public). When set, the storefront shows the whole image and links it to `cta.href`.
    */
   image?: string;
-  /** Pixel size of `image` (defaults to 1168×784, 3:2). */
+  /** Pixel size of `image` (defaults to 2880×1440, 2:1; keep text inside the centre 2400×1200 safe area). */
   imageSize?: { width: number; height: number };
+  /** Colours down the artwork's left and right edges (top → bottom), used to fill any letterbox around `image`. */
+  edgeColors?: { left: string[]; right: string[] };
   /** Photo ids for text-overlay banners, resolved with productImage(): "photo-…" (Unsplash) or "px:<id>" (Pexels). Unused when `image` is set. */
   imageIds: string[];
   /** "light" = ivory editorial panel, "dark" = soft-black panel. (Legacy "lime" is read as "light".) */
@@ -162,8 +164,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "mix.",
     supporting: "Fusion ethnic streetwear for the now generation.",
     cta: { label: "Shop now", href: "/new-in" },
-    image: "/banners/banner-01-wear-the-mix-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-01-wear-the-mix-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#004B59", "#004958", "#004655", "#004250", "#003D4C"], right: ["#B95134", "#B95134", "#B85133", "#B54F31", "#8D503B"] },
     imageIds: [],
     theme: "light",
     isActive: true,
@@ -176,8 +179,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "rules.",
     supporting: "The saree, styled your way.",
     cta: { label: "Shop now", href: "/shop/sarees" },
-    image: "/banners/banner-02-no-rules-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-02-no-rules-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#E6D1B5", "#E9D4B8", "#EAD6BA", "#EBD6BB", "#EAD5B9"], right: ["#EAD5BA", "#EDD9BF", "#EFDBC2", "#F1DCC4", "#F1DDC4"] },
     imageIds: [],
     theme: "light",
     isActive: true,
@@ -190,8 +194,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "one style.",
     supporting: "Tradition meets street. Style unites.",
     cta: { label: "Shop now", href: "/collections" },
-    image: "/banners/banner-03-two-worlds-one-style-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-03-two-worlds-one-style-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#F0E0CA", "#DCCEB0", "#A6996A", "#D6C5A6", "#EDDBC3"], right: ["#96928C", "#6A6865", "#686765", "#595957", "#5E5E5B"] },
     imageIds: [],
     theme: "light",
     isActive: true,
@@ -204,8 +209,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "in motion.",
     supporting: "Contemporary silhouettes. Timeless heritage.",
     cta: { label: "Shop now", href: "/shop/lehengas" },
-    image: "/banners/banner-04-culture-in-motion-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-04-culture-in-motion-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#23211F", "#534E49", "#4B4642", "#2D2A27", "#242322"], right: ["#625D59", "#756E6A", "#79736F", "#6F6965", "#575350"] },
     imageIds: [],
     theme: "light",
     isActive: true,
@@ -218,8 +224,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "Remixed.",
     supporting: "Modern layers. Heritage forever. Styled for now.",
     cta: { label: "Shop now", href: "/women" },
-    image: "/banners/banner-05-roots-remixed-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-05-roots-remixed-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#FEF4E3", "#FEF6E4", "#FEF6E5", "#FEF6E5", "#FEF6E5"], right: ["#FEF5E3", "#FEF6E5", "#FEF6E6", "#FEF7E6", "#FEF7E7"] },
     imageIds: [],
     theme: "light",
     isActive: true,
@@ -232,8 +239,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "heirloom.",
     supporting: "Contemporary ethnic wear for a modern legacy.",
     cta: { label: "Shop now", href: "/collections/festive-edit" },
-    image: "/banners/banner-06-the-new-heirloom-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-06-the-new-heirloom-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#EBD9C5", "#EEDCC9", "#EFDDCA", "#EDDAC6", "#E6D1BC"], right: ["#C2A88F", "#C2A88D", "#AC8F6F", "#715639", "#5B4531"] },
     imageIds: [],
     theme: "light",
     isActive: true,
@@ -246,8 +254,9 @@ export const heroBanners: HeroBanner[] = [
     accent: "no rules.",
     supporting: "Style is yours. Own it.",
     cta: { label: "Shop now", href: "/women" },
-    image: "/banners/banner-07-fashion-has-no-rules-v2.webp",
-    imageSize: { width: 1168, height: 784 },
+    image: "/banners/banner-07-fashion-has-no-rules-v3.webp",
+    imageSize: { width: 2880, height: 1440 },
+    edgeColors: { left: ["#FEC6CB", "#FECACD", "#FEC9CC", "#FEC5CA", "#FEC3C8"], right: ["#FEBDC5", "#FEC1C8", "#FEC5CB", "#FEC2C9", "#FEC3CA"] },
     imageIds: [],
     theme: "light",
     isActive: true,

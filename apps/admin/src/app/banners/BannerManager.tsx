@@ -25,9 +25,9 @@ const blank = (n: number): HeroBanner => ({
 
 function Preview({ b, compact = false }: { b: HeroBanner; compact?: boolean }) {
   if (b.image) {
-    // Finished artwork: shown whole at 3:2, exactly as the storefront renders it.
+    // Finished artwork: shown whole at 2:1, exactly as the storefront renders it.
     return (
-      <div className="relative aspect-[3/2] overflow-hidden rounded-md border border-line bg-[#F7F5F0]">
+      <div className="relative aspect-[2/1] overflow-hidden rounded-md border border-line bg-[#F7F5F0]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={b.image} alt={`${b.headline} ${b.accent}`} loading="lazy" className="h-full w-full object-contain" />
       </div>
@@ -307,7 +307,7 @@ export function BannerManager({
                 <input
                   id="b-image"
                   className="input font-mono text-xs"
-                  placeholder="/banners/banner-01-wear-the-mix-v2.webp"
+                  placeholder="/banners/banner-01-wear-the-mix-v3.webp"
                   value={current.image ?? ""}
                   onChange={(e) => update({ image: e.target.value.trim() || undefined })}
                 />
