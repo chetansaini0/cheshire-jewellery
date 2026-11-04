@@ -10,6 +10,9 @@ import { productImage } from "@cheshire/database/catalog";
 const INTERVAL_MS = 6000;
 
 /** Accessible name for a slide: the headline as it reads on the artwork. */
+/** Stage height: full-width 3:2 on phones; on larger screens shrink so banner + controls fit the first screen. */
+const STAGE_HEIGHT = "min(66.6667vw, max(240px, calc(100svh - 170px)), 840px)";
+
 const slideTitle = (b: HeroBanner) => `${b.headline} ${b.accent}`.replace(/\s+/g, " ").trim();
 
 /**
@@ -35,6 +38,7 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
   }, [index, paused, count, go]);
 
   if (!count) return null;
+  const imageMode = slides.every((b) => Boolean(b.image));
 
   return (
     <section
@@ -60,42 +64,67 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
       }}
     >
       <h1 className="sr-only">Cheshire — Roots. Remixed.</h1>
-      <div className="mx-auto grid max-w-[1180px] sm:px-6 sm:pt-6 lg:px-10 lg:pt-8">
+      {imageMode ? (
+        /*
+         * Image stage. Height = min(width × 2/3, viewport − announcement bar − header − controls), capped so
+         * native 1168×784 artwork is never blown up much. The 3:2 banner sits centred and is never cropped
+         * (object-contain); leftover side space is filled with a soft, blurred copy of the same banner.
+         * Height comes from CSS alone, so the space is reserved before images load (no layout shift).
+         */
+        <div className="relative isolate overflow-hidden bg-ivory" style={{ height: STAGE_HEIGHT }}>
+          {slides.map((b, i) => (
+            <div
+              key={`bg-${b.id}`}
+              aria-hidden
+              className={`absolute inset-0 -z-10 transition-opacity duration-[900ms] motion-reduce:transition-none ${i === index ? "opacity-100" : "opacity-0"}`}
+            >
+              {Math.abs(i - index) <= 1 || i === 0 ? (
+                <Image src={b.image!} alt="" fill sizes="64px" quality={40} className="scale-125 object-cover opacity-70 blur-2xl saturate-[.85]" />
+              ) : null}
+              <div className="absolute inset-0 bg-ivory/35" />
+            </div>
+          ))}
+          <div className="relative mx-auto grid h-full max-w-full" style={{ aspectRatio: "3 / 2" }}>
+            {slides.map((b, i) => {
+              const active = i === index;
+              const size = b.imageSize ?? { width: 1168, height: 784 };
+              return (
+                <div
+                  key={b.id}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${count}: ${slideTitle(b)}`}
+                  aria-hidden={!active}
+                  className={`col-start-1 row-start-1 h-full min-h-0 transition-opacity duration-[900ms] ease-luxe motion-reduce:transition-none ${
+                    active ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
+                  }`}
+                >
+                  <Link
+                    href={b.cta.href}
+                    tabIndex={active ? 0 : -1}
+                    className="block h-full w-full focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gold"
+                  >
+                    <Image
+                      src={b.image!}
+                      alt={`${slideTitle(b)} — ${b.cta.label}`}
+                      width={size.width}
+                      height={size.height}
+                      priority={i === 0}
+                      loading={i === 0 ? undefined : "lazy"}
+                      fetchPriority={i === 0 ? "high" : "low"}
+                      sizes="(max-width: 1260px) 100vw, 1260px"
+                      className="h-full w-full object-contain lg:shadow-lift"
+                    />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+      <div className="mx-auto grid max-w-site">
         {slides.map((b, i) => {
           const active = i === index;
-          if (b.image) {
-            const size = b.imageSize ?? { width: 1168, height: 784 };
-            return (
-              <div
-                key={b.id}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`${i + 1} of ${count}: ${slideTitle(b)}`}
-                aria-hidden={!active}
-                className={`col-start-1 row-start-1 transition-opacity duration-[900ms] ease-luxe motion-reduce:transition-none ${
-                  active ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
-                }`}
-              >
-                <Link
-                  href={b.cta.href}
-                  tabIndex={active ? 0 : -1}
-                  className="group relative block aspect-[3/2] overflow-hidden bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:rounded-md sm:shadow-soft"
-                >
-                  <Image
-                    src={b.image}
-                    alt={`${slideTitle(b)} — ${b.cta.label}`}
-                    width={size.width}
-                    height={size.height}
-                    priority={i === 0}
-                    loading={i === 0 ? undefined : "lazy"}
-                    fetchPriority={i === 0 ? "high" : "low"}
-                    sizes="(max-width: 1180px) 100vw, 1100px"
-                    className="h-full w-full object-contain"
-                  />
-                </Link>
-              </div>
-            );
-          }
           const dark = b.theme === "dark";
           const [main, inset] = b.imageIds;
           return (
@@ -154,9 +183,10 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
           );
         })}
       </div>
+      )}
 
       {count > 1 ? (
-        <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex h-14 max-w-site items-center justify-between gap-4 px-5 sm:px-6 lg:px-10">
           <div className="flex items-center gap-2 sm:gap-3" role="tablist" aria-label="Choose slide">
             {slides.map((b, i) => (
               <button

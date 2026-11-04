@@ -307,7 +307,7 @@ export function BannerManager({
                 <input
                   id="b-image"
                   className="input font-mono text-xs"
-                  placeholder="/banners/banner-01-wear-the-mix.webp"
+                  placeholder="/banners/banner-01-wear-the-mix-v2.webp"
                   value={current.image ?? ""}
                   onChange={(e) => update({ image: e.target.value.trim() || undefined })}
                 />
