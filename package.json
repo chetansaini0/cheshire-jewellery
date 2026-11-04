@@ -2,7 +2,7 @@
   "name": "cheshire",
   "version": "1.0.0",
   "private": true,
-  "description": "CHESHIRE — contemporary aesthetic jewellery commerce ecosystem",
+  "description": "CHESHIRE — contemporary aesthetic clothing & streetwear commerce ecosystem",
   "workspaces": [
     "apps/web",
     "apps/admin",
