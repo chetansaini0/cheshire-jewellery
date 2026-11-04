@@ -4,9 +4,10 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { CategorySlug, Mood, SortOption } from "@cheshire/types";
 import { getProducts } from "@/lib/catalog";
+import { categories } from "@cheshire/config";
 import { ProductCard } from "@/components/product/ProductCard";
 
-const categoryTabs = ["all", "tees", "hoodies", "outerwear", "denim", "dresses", "co-ords", "lehengas", "sarees", "suits", "accessories"] as const;
+const categoryTabs = ["all", "sarees", "lehengas", "suits", "kurtas", "tees", "hoodies", "sweatshirts", "outerwear", "denim", "dresses", "co-ords", "accessories"] as const;
 const sorts: { value: SortOption; label: string }[] = [
   { value: "recommended", label: "Recommended" },
   { value: "newest", label: "Newest" },
@@ -48,8 +49,8 @@ export function ShopClient({
     <div className="mx-auto max-w-site px-4 py-10 sm:px-6 lg:px-10">
       <div className="flex flex-col gap-4 border-b border-line pb-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-[11px] tracking-[0.2em] uppercase text-muted">Catalogue</p>
-          <h1 className="mt-2 font-serif text-4xl md:text-6xl">Shop</h1>
+          <p className="eyebrow">Catalogue</p>
+          <h1 className="mt-2 font-serif text-5xl font-medium md:text-6xl">{category === "all" ? "Shop all" : (categories.find((x) => x.slug === category)?.name ?? "Shop")}</h1>
         </div>
         <p className="text-sm text-muted">{result.total} styles</p>
       </div>
@@ -59,11 +60,11 @@ export function ShopClient({
           <a
             key={c}
             href={c === "all" ? "/shop" : `/shop/${c}`}
-            className={`whitespace-nowrap border px-4 py-2 text-[11px] tracking-[0.16em] uppercase ${
-              category === c ? "border-gold bg-gold text-ink" : "border-line"
+            className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition ${
+              category === c ? "border-ink bg-ink text-ivory" : "border-line bg-card text-muted hover:border-ink hover:text-ink"
             }`}
           >
-            {c}
+            {c === "all" ? "All" : (categories.find((x) => x.slug === c)?.name ?? c)}
           </a>
         ))}
       </div>

@@ -49,7 +49,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               <li key={s} className="flex flex-col items-center text-center">
                 <div className="flex w-full items-center">
                   <span className={`h-0.5 flex-1 ${i === 0 ? "opacity-0" : done ? "bg-ink" : "bg-line"}`} />
-                  <span className={`grid h-8 w-8 place-items-center rounded-full text-xs font-bold ${done ? "bg-lime text-[#0A0A0A] ring-2 ring-ink" : "bg-ink/5 text-muted"}`}>
+                  <span className={`grid h-8 w-8 place-items-center rounded-full text-xs font-bold ${done ? "bg-gold text-white ring-2 ring-ink" : "bg-ink/5 text-muted"}`}>
                     {done ? "✓" : i + 1}
                   </span>
                   <span className={`h-0.5 flex-1 ${i === FLOW.length - 1 ? "opacity-0" : reached.has(FLOW[i + 1]) ? "bg-ink" : "bg-line"}`} />
@@ -91,7 +91,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               </div>
               {order.discount ? (
                 <div className="flex justify-between">
-                  <dt className="text-muted">Discount {order.couponCode ? <code className="ml-1 rounded bg-lime/30 px-1 text-xs text-lime-ink">{order.couponCode}</code> : null}</dt>
+                  <dt className="text-muted">Discount {order.couponCode ? <code className="ml-1 rounded bg-gold-soft px-1 text-xs text-gold-deep">{order.couponCode}</code> : null}</dt>
                   <dd className="tabular-nums text-emerald-600">−{inr(order.discount)}</dd>
                 </div>
               ) : null}
@@ -110,7 +110,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             <ol className="relative ml-2 border-l border-line">
               {[...order.events].reverse().map((e, i) => (
                 <li key={`${e.status}-${e.at}-${i}`} className="mb-5 ml-5 last:mb-0">
-                  <span className={`absolute -left-[7px] mt-1 h-3.5 w-3.5 rounded-full ring-4 ring-surface ${i === 0 ? "bg-lime ring-offset-0" : "bg-ink/30"}`} />
+                  <span className={`absolute -left-[7px] mt-1 h-3.5 w-3.5 rounded-full ring-4 ring-surface ${i === 0 ? "bg-gold ring-offset-0" : "bg-ink/30"}`} />
                   <div className="flex flex-wrap items-center gap-2">
                     <Pill tone={statusTone[e.status]}>{e.status}</Pill>
                     <span className="text-xs text-muted">{dateTime(e.at)} IST</span>

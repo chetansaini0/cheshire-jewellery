@@ -40,7 +40,7 @@ export default async function EditProductPage({
         subtitle={
           <span className="flex flex-wrap items-center gap-2">
             <Pill tone={product.status === "active" ? "green" : "gray"}>{product.status}</Pill>
-            <Pill tone={product.origin === "admin" ? "lime" : "gray"}>{product.origin === "admin" ? "Created in admin" : "Catalogue product"}</Pill>
+            <Pill tone={product.origin === "admin" ? "gold" : "gray"}>{product.origin === "admin" ? "Created in admin" : "Catalogue product"}</Pill>
             {product.edited && product.updatedAt ? <span>Last saved {dateTime(product.updatedAt)} IST</span> : <span>Not edited yet — showing the original catalogue values</span>}
           </span>
         }

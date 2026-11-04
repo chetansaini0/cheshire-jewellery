@@ -1,27 +1,28 @@
 /** @type {import('tailwindcss').Config} */
+// Shared CHESHIRE design tokens (packages/ui) — the same preset the storefront uses.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { preset } = require("../../packages/ui/theme.cjs");
+
 const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 module.exports = {
+  presets: [preset],
   darkMode: "class",
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        // Storefront palette: off-white / black / acid lime. Values are CSS variables so dark mode is a class flip.
+        // Surfaces are CSS variables so the optional dark mode is a class flip; light is the default.
         bg: v("bg"),
         surface: v("surface"),
         ink: v("ink"),
         line: v("line"),
         muted: v("muted"),
-        lime: { DEFAULT: "#D7FF3A", ink: v("lime-ink") },
-        // Legacy token names used by older pages, remapped to the new palette.
         ivory: v("bg"),
-        gold: { DEFAULT: "#D7FF3A", soft: "#EEFFB0", deep: v("lime-ink") },
-      },
-      fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-anton)", "Impact", "sans-serif"],
-        serif: ["var(--font-anton)", "Impact", "sans-serif"],
+        card: v("surface"),
+        gold: { DEFAULT: "#A6844A", soft: v("gold-soft"), deep: v("gold-deep") },
+        // Legacy alias: older markup still says "lime"; it now renders as champagne gold.
+        lime: { DEFAULT: "#A6844A", ink: v("gold-deep") },
       },
     },
   },

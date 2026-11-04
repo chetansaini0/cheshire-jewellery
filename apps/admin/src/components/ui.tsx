@@ -15,7 +15,7 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        {eyebrow ? <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-lime-ink">{eyebrow}</p> : null}
+        {eyebrow ? <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold-deep">{eyebrow}</p> : null}
         <h1 className="font-display text-3xl uppercase leading-none tracking-wide sm:text-4xl">{title}</h1>
         {subtitle ? <p className="mt-2 max-w-2xl text-sm text-muted">{subtitle}</p> : null}
       </div>
@@ -40,9 +40,9 @@ export function LiveTag({ title = "Computed from the committed catalogue / local
   return (
     <span
       title={title}
-      className="inline-flex items-center gap-1 rounded-full bg-lime/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-lime-ink"
+      className="inline-flex items-center gap-1 rounded-full bg-gold-soft px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-deep"
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-lime-ink" /> Catalogue
+      <span className="h-1.5 w-1.5 rounded-full bg-gold" /> Catalogue
     </span>
   );
 }
@@ -92,17 +92,17 @@ export function Kpi({
   delta?: number;
   hint?: string;
   tag?: ReactNode;
-  tone?: "default" | "lime" | "warn";
+  tone?: "default" | "gold" | "warn";
   href?: string;
 }) {
   const body = (
     <div
       className={`card h-full p-4 transition ${href ? "hover:border-ink" : ""} ${
-        tone === "lime" ? "!border-transparent !bg-lime text-[#0A0A0A]" : tone === "warn" ? "!border-amber-500/50" : ""
+        tone === "gold" ? "!border-transparent !bg-gold text-white" : tone === "warn" ? "!border-amber-500/50" : ""
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${tone === "lime" ? "text-black/60" : "text-muted"}`}>{label}</p>
+        <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${tone === "gold" ? "text-white/75" : "text-muted"}`}>{label}</p>
         {tag}
       </div>
       <p className="mt-3 font-display text-3xl leading-none tracking-wide">{value}</p>
@@ -112,7 +112,7 @@ export function Kpi({
             {delta >= 0 ? "▲" : "▼"} {Math.abs(delta).toFixed(1)}%
           </span>
         ) : null}
-        {hint ? <span className={tone === "lime" ? "text-black/60" : "text-muted"}>{hint}</span> : null}
+        {hint ? <span className={tone === "gold" ? "text-white/75" : "text-muted"}>{hint}</span> : null}
       </div>
     </div>
   );
@@ -127,7 +127,7 @@ export function Kpi({
 
 const pillTones: Record<string, string> = {
   green: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 ring-emerald-500/30",
-  lime: "bg-lime/30 text-[#2f3a00] dark:text-lime ring-lime/50",
+  gold: "bg-gold-soft text-gold-deep ring-gold/30",
   amber: "bg-amber-400/15 text-amber-700 dark:text-amber-300 ring-amber-500/30",
   red: "bg-red-500/12 text-red-700 dark:text-red-300 ring-red-500/30",
   blue: "bg-sky-500/12 text-sky-700 dark:text-sky-300 ring-sky-500/30",

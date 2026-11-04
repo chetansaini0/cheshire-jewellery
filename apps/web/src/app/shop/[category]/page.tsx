@@ -1,16 +1,17 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { CategorySlug } from "@cheshire/types";
+import { categories } from "@cheshire/config";
 import { ShopClient } from "../ShopClient";
 
 type Props = { params: Promise<{ category: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
-  const title = category.charAt(0).toUpperCase() + category.slice(1);
+  const title = categories.find((c) => c.slug === category)?.name ?? category.charAt(0).toUpperCase() + category.slice(1);
   return {
-    title: `${title} | CHESHIRE`,
-    description: `Shop ${title.toLowerCase()} from CHESHIRE — streetwear and clothing.`,
+    title,
+    description: `Shop ${title.toLowerCase()} at CHESHIRE. Roots. Remixed. Fusion wear for a Gen Z India.`,
   };
 }
 

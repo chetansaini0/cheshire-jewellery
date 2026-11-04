@@ -40,7 +40,7 @@ export function ProductTable({
   initialQuery,
 }: {
   rows: ProductRow[];
-  categories: Array<{ slug: string; name: string; count: number }>;
+  categories: Array<{ slug: string; name: string; count: number; group: string }>;
   fabrics: string[];
   sizes: string[];
   lowStockThreshold: number;
@@ -49,6 +49,8 @@ export function ProductTable({
 }) {
   const [q, setQ] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory);
+  const [group, setGroup] = useState("");
+  const groupOf = useMemo(() => Object.fromEntries(categories.map((c) => [c.slug, c.group])), [categories]);
   const [fabric, setFabric] = useState("");
   const [size, setSize] = useState("");
   const [status, setStatus] = useState("");
@@ -61,6 +63,7 @@ export function ProductTable({
     const needle = q.trim().toLowerCase();
     const fabricNeedle = fabric.toLowerCase();
     return rows
+      .filter((r) => !group || groupOf[r.category] === group)
       .filter((r) => !category || r.category === category)
       .filter((r) => !fabric || r.fabric.toLowerCase().includes(fabricNeedle))
       .filter((r) => !size || r.sizes.includes(size))
@@ -73,7 +76,7 @@ export function ProductTable({
         const bv = b[sort.key];
         return (typeof av === "number" && typeof bv === "number" ? av - bv : String(av).localeCompare(String(bv))) * sort.dir;
       });
-  }, [rows, q, category, fabric, size, status, stock, sort, lowStockThreshold]);
+  }, [rows, q, group, groupOf, category, fabric, size, status, stock, sort, lowStockThreshold]);
 
   const fabricGroups = useMemo(() => {
     const keys = ["Cotton", "Silk", "Georgette", "Chiffon", "Chanderi", "Banarasi", "Denim", "Linen", "Fleece", "Wool", "Leather", "Satin", "Crepe", "Velvet", "Organza", "Nylon", "Polyester", "Terry", "Viscose", "Modal", "Muslin", "Net", "Canvas"];
@@ -104,11 +107,33 @@ export function ProductTable({
 
   return (
     <div>
+      <div className="mb-3 inline-flex rounded-sm border border-line bg-surface p-1" role="tablist" aria-label="Product group">
+        {[
+          { slug: "", name: "All groups" },
+          { slug: "ethnic", name: "Ethnic" },
+          { slug: "casual", name: "Casual" },
+          { slug: "accessories", name: "Accessories" },
+        ].map((g) => (
+          <button
+            key={g.slug || "all"}
+            type="button"
+            role="tab"
+            aria-selected={group === g.slug}
+            onClick={() => {
+              setGroup(g.slug);
+              setCategory("");
+            }}
+            className={`rounded-sm px-3 py-1.5 text-xs font-semibold transition ${group === g.slug ? "bg-gold-soft text-ink" : "text-muted hover:text-ink"}`}
+          >
+            {g.name}
+          </button>
+        ))}
+      </div>
       <div className="no-scrollbar -mx-1 mb-4 flex gap-2 overflow-x-auto px-1">
         <button type="button" onClick={() => setCategory("")} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${!category ? "border-ink bg-ink text-bg" : "border-line bg-surface text-muted hover:text-ink"}`}>
           All <span className="opacity-60">{rows.length}</span>
         </button>
-        {categories.map((c) => (
+        {categories.filter((c) => !group || c.group === group).map((c) => (
           <button
             key={c.slug}
             type="button"

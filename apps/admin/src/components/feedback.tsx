@@ -229,7 +229,7 @@ export function Hint({ children, label = "More info" }: { children: ReactNode; l
       </button>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden w-60 max-w-[70vw] -translate-x-1/2 rounded-md bg-[#0A0A0A] px-3 py-2 text-[11px] font-normal normal-case leading-snug tracking-normal text-white shadow-lg group-hover:block group-focus-within:block"
+        className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden w-60 max-w-[70vw] -translate-x-1/2 rounded-md bg-[#111111] px-3 py-2 text-[11px] font-normal normal-case leading-snug tracking-normal text-white shadow-lg group-hover:block group-focus-within:block"
       >
         {children}
       </span>

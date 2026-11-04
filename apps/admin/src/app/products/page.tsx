@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { categories } from "@cheshire/database/catalog";
+import { categoryGroup } from "@cheshire/config";
 import { Icon } from "@/components/Icon";
 import { LiveTag, PageHeader } from "@/components/ui";
 import { ProductTable, type ProductRow } from "./ProductTable";
@@ -44,7 +45,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         actions={
           <>
             <LiveTag />
-            <Link href="/products/new" className="btn-lime">
+            <Link href="/products/new" className="btn-gold">
               <Icon name="plus" /> Add product
             </Link>
           </>
@@ -52,7 +53,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       />
       <ProductTable
         rows={rows}
-        categories={categories.map((c) => ({ slug: c.slug, name: c.name, count: counts[c.slug] ?? 0 }))}
+        categories={categories.map((c) => ({ slug: c.slug, name: c.name, count: counts[c.slug] ?? 0, group: categoryGroup(c.slug) }))}
         fabrics={fabricOptions(products)}
         sizes={sizeOptions(products)}
         lowStockThreshold={settings.lowStockThreshold}

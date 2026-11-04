@@ -6,6 +6,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.NEXT_PUBLIC_SITE_URL || seoDefaults.siteUrl;
   const staticRoutes = [
     "",
+    "/new-in",
+    "/women",
+    "/men",
     "/shop",
     "/gifts",
     "/about",

@@ -8,9 +8,9 @@ export function LoginForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(loginAction, {});
   const [show, setShow] = useState(false);
   return (
-    <form action={action} className="card space-y-4 p-6">
+    <form action={action} className="card space-y-5 p-6 sm:p-8">
       <div>
-        <h1 className="font-display text-3xl uppercase tracking-wide">Sign in</h1>
+        <h1 className="font-serif text-3xl">Sign in</h1>
         <p className="mt-1 text-sm text-muted">Enter the admin password to manage your store.</p>
       </div>
       <input type="hidden" name="next" value={next} />
@@ -43,7 +43,7 @@ export function LoginForm({ next }: { next: string }) {
           </p>
         ) : null}
       </div>
-      <button className="btn-lime w-full py-3" disabled={pending}>
+      <button className="btn-gold w-full py-3" disabled={pending}>
         <Icon name="lock" /> {pending ? "Checking…" : "Sign in"}
       </button>
     </form>

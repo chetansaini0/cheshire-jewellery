@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { ShopClient } from "./ShopClient";
 
 export const metadata: Metadata = {
-  title: "Shop streetwear & clothing online",
+  title: "Shop all",
   description:
-    "Browse CHESHIRE tees, hoodies, outerwear, denim, dresses, co-ords and accessories. New drops every Friday.",
+    "Shop CHESHIRE: sarees, lehengas, suits and kurtas alongside hoodies, tees, sweatshirts and accessories. Roots. Remixed.",
 };
 
 export default function ShopPage() {

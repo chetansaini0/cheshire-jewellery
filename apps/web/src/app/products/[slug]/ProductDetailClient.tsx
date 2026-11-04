@@ -1,5 +1,6 @@
 "use client";
 
+import { displayName } from "@/lib/display";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -111,7 +112,7 @@ export function ProductDetailClient({
               {formatProductLabel(product.label || product.badge)}
             </p>
           ) : null}
-          <h1 className="mt-2 font-serif text-5xl uppercase leading-[0.9] md:text-6xl">{product.name}</h1>
+          <h1 className="mt-2 font-serif text-4xl font-medium leading-tight md:text-5xl">{displayName(product.name)}</h1>
           <p className="mt-3 text-sm text-muted">
             {product.rating.toFixed(1)} · {product.reviewCount} reviews
           </p>
@@ -260,7 +261,7 @@ export function ProductDetailClient({
       </section>
 
       <section className="mt-16">
-        <h2 className="font-serif text-4xl uppercase md:text-5xl">You may also like</h2>
+        <h2 className="font-serif text-4xl md:text-5xl">You may also like</h2>
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {alsoLike.map((p) => (
             <ProductCard key={p.id} product={p} />
@@ -270,7 +271,7 @@ export function ProductDetailClient({
 
       {recentProducts.length ? (
         <section className="mt-16">
-          <h2 className="font-serif text-4xl uppercase md:text-5xl">Recently viewed</h2>
+          <h2 className="font-serif text-4xl md:text-5xl">Recently viewed</h2>
           <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
             {recentProducts.map((p) => (
               <ProductCard key={p.id} product={p} />

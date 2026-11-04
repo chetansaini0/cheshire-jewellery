@@ -14,6 +14,7 @@
     "@cheshire/config": "*",
     "@cheshire/database": "*",
     "@cheshire/integrations": "*",
+    "@cheshire/ui": "*",
     "@cheshire/utils": "*",
     "next": "15.5.7",
     "react": "^19.0.0",

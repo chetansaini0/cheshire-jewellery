@@ -15,6 +15,7 @@ export function AdminShell({ children, readOnly = false, authEnabled = false }: 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -53,26 +54,41 @@ export function AdminShell({ children, readOnly = false, authEnabled = false }: 
 
   const renderSidebar = (collapsed: boolean) => (
     <nav className="flex h-full flex-col">
-      <div className={`flex h-16 items-center border-b border-white/10 ${collapsed ? "justify-center px-2" : "justify-between px-5"}`}>
-        <Link href="/" className="flex items-center gap-2 text-[#F4F3EF]">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-lime font-display text-lg leading-none text-[#0A0A0A]">C</span>
+      <div className={`flex h-16 items-center border-b border-line ${collapsed ? "justify-center px-2" : "justify-between px-5"}`}>
+        <Link href="/" className="flex items-center gap-2.5 text-ink">
+          <span className="grid h-8 w-8 place-items-center rounded-sm border border-gold/50 bg-gold-soft font-serif text-xl font-semibold leading-none text-ink">C</span>
           {!collapsed ? (
             <span className="leading-none">
-              <span className="block font-display text-xl tracking-wide">CHESHIRE</span>
-              <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.3em] text-lime">Ops / Admin</span>
+              <span className="block font-serif text-xl font-semibold tracking-[0.18em]">CHESHIRE</span>
+              <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.3em] text-gold">Admin</span>
             </span>
           ) : null}
         </Link>
       </div>
-      <div className="no-scrollbar flex-1 overflow-y-auto px-2 py-4">
-        {navGroups.map((group) => (
-          <div key={group.title} className="mb-4">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-3 py-5">
+        {navGroups.map((group) => {
+          const hasActive = group.items.some((i) => isActive(pathname, i.href));
+          const open = !group.collapsible || collapsed || moreOpen || hasActive;
+          return (
+          <div key={group.title} className="mb-5">
             {!collapsed ? (
-              <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">{group.title}</p>
+              group.collapsible ? (
+                <button
+                  type="button"
+                  onClick={() => setMoreOpen((o) => !o)}
+                  aria-expanded={open}
+                  className="flex w-full items-center justify-between px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted hover:text-ink"
+                >
+                  {group.title}
+                  <Icon name="chevronRight" className={`h-3.5 w-3.5 transition ${open ? "rotate-90" : ""}`} />
+                </button>
+              ) : (
+                <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">{group.title}</p>
+              )
             ) : (
-              <div className="mx-3 mb-2 border-t border-white/10" />
+              <div className="mx-3 mb-2 border-t border-line" />
             )}
-            {group.items.map((item) => {
+            {open && group.items.map((item) => {
               const active = isActive(pathname, item.href);
               return (
                 <Link
@@ -80,9 +96,9 @@ export function AdminShell({ children, readOnly = false, authEnabled = false }: 
                   href={item.href}
                   title={collapsed ? item.label : undefined}
                   aria-current={active ? "page" : undefined}
-                  className={`group relative flex items-center gap-3 rounded-md py-2 text-sm transition ${
+                  className={`group relative flex items-center gap-3 rounded-sm py-2 text-[13px] transition ${
                     collapsed ? "justify-center px-2" : "px-3"
-                  } ${active ? "bg-lime font-semibold text-[#0A0A0A]" : "text-white/70 hover:bg-white/5 hover:text-white"}`}
+                  } ${active ? "bg-gold-soft font-semibold text-ink before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-gold" : "text-muted hover:bg-bg hover:text-ink"}`}
                 >
                   <Icon name={item.icon} className="h-[18px] w-[18px] shrink-0" />
                   {!collapsed ? <span className="truncate">{item.label}</span> : null}
@@ -90,13 +106,14 @@ export function AdminShell({ children, readOnly = false, authEnabled = false }: 
               );
             })}
           </div>
-        ))}
+          );
+        })}
       </div>
-      <div className="hidden border-t border-white/10 p-2 lg:block">
+      <div className="hidden border-t border-line p-2 lg:block">
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-xs uppercase tracking-[0.16em] text-white/60 hover:bg-white/5 hover:text-white"
+          className="flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-muted hover:bg-bg hover:text-ink"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <Icon name={collapsed ? "chevronRight" : "chevronLeft"} />
@@ -112,20 +129,20 @@ export function AdminShell({ children, readOnly = false, authEnabled = false }: 
     <div className="min-h-screen">
       {/* Desktop sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 hidden bg-[#0A0A0A] transition-[width] duration-200 lg:block ${collapsed ? "w-[72px]" : "w-[248px]"}`}
+        className={`fixed inset-y-0 left-0 z-30 hidden border-r border-line bg-surface transition-[width] duration-200 lg:block ${collapsed ? "w-[72px]" : "w-[248px]"}`}
       >
         {renderSidebar(collapsed)}
       </aside>
       {/* Mobile drawer */}
       {mobileOpen ? (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <button type="button" aria-label="Close menu" className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-[260px] bg-[#0A0A0A]">{renderSidebar(false)}</aside>
+          <button type="button" aria-label="Close menu" className="absolute inset-0 bg-ink/30" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-[260px] bg-surface shadow-lift">{renderSidebar(false)}</aside>
         </div>
       ) : null}
 
       <div className={`transition-[padding] duration-200 ${collapsed ? "lg:pl-[72px]" : "lg:pl-[248px]"}`}>
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-bg/85 px-4 backdrop-blur sm:px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-bg/90 px-4 backdrop-blur sm:px-6">
           <button type="button" className="btn-ghost px-2.5 lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open menu">
             <Icon name="menu" />
           </button>
@@ -157,7 +174,7 @@ export function AdminShell({ children, readOnly = false, authEnabled = false }: 
             <button type="button" onClick={toggleTheme} className="btn-ghost px-2.5" aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
               <Icon name={dark ? "sun" : "moon"} />
             </button>
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-ink text-xs font-semibold text-bg" title="Chetan Saini">
+            <span className="grid h-9 w-9 place-items-center rounded-full border border-gold/40 bg-gold-soft text-xs font-semibold text-gold-deep" title="Chetan Saini">
               CS
             </span>
             {authEnabled ? (

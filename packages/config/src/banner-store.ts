@@ -9,13 +9,13 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { heroBanners, type HeroBanner } from "./index";
+import { heroBanners, MAX_ACTIVE_BANNERS, type HeroBanner } from "./index";
 import { asStoreError, isReadOnlyDataStore, ReadOnlyStoreError, resolveRepoDataDir } from "./data-dir";
 
 export { resolveRepoDataDir, isReadOnlyDataStore, ReadOnlyStoreError };
 
 export const BANNER_FILE_NAME = "hero-banners.json";
-export const MAX_ACTIVE_BANNERS = 5;
+export { MAX_ACTIVE_BANNERS };
 
 export function bannerFilePath() {
   return path.join(resolveRepoDataDir(), BANNER_FILE_NAME);
@@ -25,6 +25,9 @@ const isStr = (v: unknown, max = 200): v is string => typeof v === "string" && v
 const isHref = (v: unknown): v is string => isStr(v, 300) && (v.startsWith("/") || v.startsWith("https://"));
 const isImageId = (v: unknown): v is string =>
   isStr(v, 300) && (/^photo-[\w-]+$/.test(v) || /^px:\d+$/.test(v));
+
+/** Finished banner artwork shipped in the apps' /public/banners folder. */
+const isBannerImage = (v: unknown): v is string => isStr(v, 200) && /^\/banners\/[\w.-]+\.(webp|jpe?g|png|avif)$/i.test(v);
 
 export type BannerValidation = { ok: true; banner: HeroBanner } | { ok: false; errors: string[] };
 
@@ -43,9 +46,13 @@ export function validateBanner(input: unknown): BannerValidation {
   if (sec && (sec.label || sec.href) && (!isStr(sec.label, 40) || !isHref(sec.href)))
     errors.push("secondary CTA needs both a label and a valid link");
   const ids = Array.isArray(b.imageIds) ? b.imageIds.filter((x) => typeof x === "string" && x.trim()) : [];
-  if (ids.length < 1 || ids.length > 2 || !ids.every(isImageId))
-    errors.push("1–2 images required: Unsplash photo-… or Pexels px:<id> (hosts allowed by the storefront)");
-  if (b.theme !== "dark" && b.theme !== "lime") errors.push("theme must be dark or lime");
+  const image = typeof b.image === "string" && b.image.trim() ? b.image.trim() : undefined;
+  if (image && !isBannerImage(image)) errors.push("banner image must be a /banners/… .webp, .jpg or .png file");
+  if (!image && (ids.length < 1 || ids.length > 2 || !ids.every(isImageId)))
+    errors.push("add a full banner image (/banners/…) or 1–2 photos: Unsplash photo-… or Pexels px:<id>");
+  if (image && ids.length && (ids.length > 2 || !ids.every(isImageId))) errors.push("photos must be Unsplash photo-… or Pexels px:<id>");
+  const size = (b.imageSize ?? {}) as Record<string, unknown>;
+  if (b.theme !== "dark" && b.theme !== "light" && b.theme !== "lime") errors.push("theme must be light or dark");
   const sortOrder = Number(b.sortOrder);
   if (!Number.isFinite(sortOrder)) errors.push("sortOrder must be a number");
   if (errors.length) return { ok: false, errors };
@@ -56,11 +63,17 @@ export function validateBanner(input: unknown): BannerValidation {
     accent: String(b.accent).trim(),
     supporting: String(b.supporting).trim(),
     cta: { label: String(cta.label).trim(), href: String(cta.href).trim() },
-    imageIds: ids.slice(0, 2) as HeroBanner["imageIds"],
-    theme: b.theme as HeroBanner["theme"],
+    imageIds: ids.slice(0, 2) as string[],
+    theme: b.theme === "dark" ? "dark" : "light",
     isActive: Boolean(b.isActive),
     sortOrder,
   };
+  if (image) {
+    banner.image = image;
+    const w = Number(size.width);
+    const h = Number(size.height);
+    banner.imageSize = w > 0 && h > 0 && w < 10000 && h < 10000 ? { width: Math.round(w), height: Math.round(h) } : { width: 1168, height: 784 };
+  }
   if (sec && sec.label && sec.href) banner.secondaryCta = { label: String(sec.label).trim(), href: String(sec.href).trim() };
   return { ok: true, banner };
 }

@@ -1,13 +1,10 @@
-import { Marquee } from "@/components/home/Marquee";
-
 export function AnnouncementBar() {
   return (
-    <div className="relative z-50 bg-ink py-2 text-ivory">
-      <Marquee
-        speed="fast"
-        items={["Free shipping over ₹999", "New drop every Friday", "7-day easy returns", "Join the Cheshire Club — 10% off first order"]}
-        className="text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px]"
-      />
+    <div className="relative z-50 border-b border-line bg-ivory px-4 py-2 text-center text-[10.5px] font-medium uppercase tracking-[0.18em] text-muted">
+      Free shipping over ₹999 <span className="mx-2 text-gold">·</span> 7-day easy returns
+      <span className="hidden sm:inline">
+        <span className="mx-2 text-gold">·</span> Designed in India
+      </span>
     </div>
   );
 }

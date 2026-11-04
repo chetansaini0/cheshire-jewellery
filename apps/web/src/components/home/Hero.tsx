@@ -6,11 +6,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { heroBanners, type HeroBanner } from "@cheshire/config";
 import { productImage } from "@cheshire/database/catalog";
 
+/** Calm, editorial pace. */
 const INTERVAL_MS = 6000;
 
+/** Accessible name for a slide: the headline as it reads on the artwork. */
+const slideTitle = (b: HeroBanner) => `${b.headline} ${b.accent}`.replace(/\s+/g, " ").trim();
+
 /**
- * `banners` comes from the server (page.tsx → @cheshire/config/banner-store), which reads the
- * admin-managed `.data/hero-banners.json` when present and falls back to the committed config.
+ * Homepage hero carousel. Slides with `image` are finished artwork (text + "Shop now" baked in): shown whole
+ * at 3:2 with object-contain and linked to `cta.href`. Slides without one fall back to the editorial text layout.
+ * `banners` comes from the server (page.tsx → @cheshire/config/banner-store): the admin-managed
+ * `.data/hero-banners.json` when present, otherwise the committed defaults.
  */
 export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
   const slides = banners.filter((b) => b.isActive).sort((a, b) => a.sortOrder - b.sortOrder);
@@ -32,7 +38,7 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
 
   return (
     <section
-      className="relative isolate overflow-hidden bg-ink text-ivory"
+      className="relative isolate bg-ivory"
       aria-roledescription="carousel"
       aria-label="Featured"
       onMouseEnter={() => setPaused(true)}
@@ -53,81 +59,95 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
         if (e.key === "ArrowLeft") go(index - 1);
       }}
     >
-      <div className="relative min-h-[82svh] md:min-h-[86svh]">
+      <h1 className="sr-only">Cheshire — Roots. Remixed.</h1>
+      <div className="mx-auto grid max-w-[1180px] sm:px-6 sm:pt-6 lg:px-10 lg:pt-8">
         {slides.map((b, i) => {
           const active = i === index;
-          const lime = b.theme === "lime";
+          if (b.image) {
+            const size = b.imageSize ?? { width: 1168, height: 784 };
+            return (
+              <div
+                key={b.id}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} of ${count}: ${slideTitle(b)}`}
+                aria-hidden={!active}
+                className={`col-start-1 row-start-1 transition-opacity duration-[900ms] ease-luxe motion-reduce:transition-none ${
+                  active ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
+                }`}
+              >
+                <Link
+                  href={b.cta.href}
+                  tabIndex={active ? 0 : -1}
+                  className="group relative block aspect-[3/2] overflow-hidden bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:rounded-md sm:shadow-soft"
+                >
+                  <Image
+                    src={b.image}
+                    alt={`${slideTitle(b)} — ${b.cta.label}`}
+                    width={size.width}
+                    height={size.height}
+                    priority={i === 0}
+                    loading={i === 0 ? undefined : "lazy"}
+                    fetchPriority={i === 0 ? "high" : "low"}
+                    sizes="(max-width: 1180px) 100vw, 1100px"
+                    className="h-full w-full object-contain"
+                  />
+                </Link>
+              </div>
+            );
+          }
+          const dark = b.theme === "dark";
+          const [main, inset] = b.imageIds;
           return (
             <div
               key={b.id}
               role="group"
               aria-roledescription="slide"
-              aria-label={`${i + 1} of ${count}: ${b.eyebrow}`}
+              aria-label={`${i + 1} of ${count}`}
               aria-hidden={!active}
-              className={`absolute inset-0 transition-opacity duration-700 ease-luxe ${
+              className={`col-start-1 row-start-1 grid transition-opacity duration-[1400ms] ease-luxe md:grid-cols-12 ${
                 active ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
-              } ${lime ? "bg-gold text-ink" : ""}`}
+              } ${dark ? "bg-ink text-ivory" : "bg-ivory text-ink"}`}
             >
-              <div className={`absolute inset-0 -z-10 grid grid-cols-1 ${b.imageIds.length > 1 ? "md:grid-cols-2" : ""}`}>
-                {b.imageIds.map((id, k) => (
-                  <div key={id} className={`relative ${k > 0 ? "hidden md:block" : ""}`}>
-                    <Image
-                      src={productImage(id, 1400)}
-                      alt=""
-                      fill
-                      priority={i === 0}
-                      loading={i === 0 ? undefined : "lazy"}
-                      sizes={b.imageIds.length > 1 ? "(max-width:768px) 100vw, 50vw" : "100vw"}
-                      className={`object-cover transition-transform duration-[7000ms] ease-out ${active ? "scale-105" : "scale-100"}`}
-                    />
+              {/* Image */}
+              <div className="relative md:order-2 md:col-span-7">
+                <div className="relative aspect-[4/5] overflow-hidden sm:aspect-[16/11] md:aspect-auto md:h-full md:min-h-[78svh]">
+                  <Image
+                    src={productImage(main ?? "", 1600)}
+                    alt=""
+                    fill
+                    priority={i === 0}
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    className={`object-cover object-[50%_25%] transition-transform duration-[9000ms] ease-out ${active ? "scale-100" : "scale-[1.04]"}`}
+                  />
+                </div>
+                {inset ? (
+                  <div className="absolute -bottom-10 left-4 hidden w-[30%] max-w-[220px] overflow-hidden rounded-sm border-[6px] border-ivory shadow-lift md:-left-16 md:bottom-12 md:block">
+                    <div className="relative aspect-[3/4]">
+                      <Image src={productImage(inset, 500)} alt="" fill sizes="220px" className="object-cover" />
+                    </div>
                   </div>
-                ))}
-                <div
-                  className={`absolute inset-0 ${
-                    lime ? "bg-gradient-to-t from-gold via-gold/40 to-transparent" : "bg-gradient-to-t from-ink via-ink/35 to-ink/10"
-                  }`}
-                />
+                ) : null}
               </div>
 
-              <div className="mx-auto flex h-full min-h-[82svh] max-w-site flex-col justify-end px-4 pb-20 pt-28 sm:px-6 md:min-h-[86svh] lg:px-10 lg:pb-24">
-                <p
-                  className={`inline-flex w-fit items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] ${
-                    lime ? "bg-ink text-gold" : "bg-gold text-ink"
-                  }`}
-                >
-                  <span className={`h-1.5 w-1.5 animate-pulse rounded-full ${lime ? "bg-gold" : "bg-ink"}`} /> {b.eyebrow}
-                </p>
-                {i === 0 ? (
-                  <h1 className="mt-5 font-serif text-[17vw] uppercase leading-[0.82] tracking-tight md:text-[10.5vw] xl:text-[10rem]">
+              {/* Copy */}
+              <div className="flex flex-col justify-center px-5 pb-12 pt-8 sm:px-8 md:order-1 md:col-span-5 md:py-16 md:pl-10 md:pr-20 lg:pl-16">
+                <p className={`text-[11px] font-semibold uppercase tracking-[0.24em] ${dark ? "text-gold-soft" : "text-gold"}`}>{b.eyebrow}</p>
+                  <h2 className="mt-5 font-serif text-[3.2rem] font-medium leading-[0.95] tracking-[-0.02em] sm:text-7xl lg:text-[6rem]">
                     {b.headline}
                     <br />
-                    <span className={lime ? "text-stroke-ink" : "text-stroke"}>{b.accent}</span>
-                  </h1>
-                ) : (
-                  <h2 className="mt-5 font-serif text-[17vw] uppercase leading-[0.82] tracking-tight md:text-[10.5vw] xl:text-[10rem]">
-                    {b.headline}
-                    <br />
-                    <span className={lime ? "text-stroke-ink" : "text-stroke"}>{b.accent}</span>
+                    <span className="italic text-gold">{b.accent}</span>
                   </h2>
-                )}
-                <div className="mt-6 flex flex-col gap-5 md:mt-8 md:flex-row md:items-end md:justify-between">
-                  <p className={`max-w-md text-sm leading-relaxed md:text-base ${lime ? "text-ink/80" : "text-ivory/80"}`}>
-                    {b.supporting}
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    <Link
-                      href={b.cta.href}
-                      tabIndex={active ? 0 : -1}
-                      className={lime ? "inline-block rounded-full bg-ink px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ivory transition hover:bg-ink/85" : "btn-primary"}
-                    >
-                      {b.cta.label}
+                <p className={`mt-6 max-w-sm text-[15px] leading-relaxed ${dark ? "text-ivory/75" : "text-muted"}`}>{b.supporting}</p>
+                <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                  <Link href={b.cta.href} tabIndex={active ? 0 : -1} className={dark ? "btn-gold" : "btn-primary"}>
+                    {b.cta.label}
+                  </Link>
+                  {b.secondaryCta ? (
+                    <Link href={b.secondaryCta.href} tabIndex={active ? 0 : -1} className="link-arrow">
+                      {b.secondaryCta.label}
                     </Link>
-                    {b.secondaryCta ? (
-                      <Link href={b.secondaryCta.href} tabIndex={active ? 0 : -1} className="btn-outline-gold">
-                        {b.secondaryCta.label}
-                      </Link>
-                    ) : null}
-                  </div>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -136,52 +156,32 @@ export function Hero({ banners = heroBanners }: { banners?: HeroBanner[] }) {
       </div>
 
       {count > 1 ? (
-        <div className="absolute inset-x-0 bottom-0 z-20">
-          <div className="mx-auto flex max-w-site items-center justify-between gap-4 px-4 pb-5 sm:px-6 lg:px-10">
-            <div className="flex items-center gap-2" role="tablist" aria-label="Choose slide">
-              {slides.map((b, i) => (
-                <button
-                  key={b.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === index}
-                  aria-label={`Go to slide ${i + 1}: ${b.eyebrow}`}
-                  onClick={() => go(i)}
-                  className="group flex h-6 items-center"
-                >
-                  <span
-                    className={`block h-1.5 rounded-full transition-all duration-300 ${
-                      i === index ? "w-10 bg-gold" : "w-4 bg-ivory/50 group-hover:bg-ivory"
-                    } ${slides[index]?.theme === "lime" && i !== index ? "!bg-ink/40" : ""} ${
-                      slides[index]?.theme === "lime" && i === index ? "!bg-ink" : ""
-                    }`}
-                  />
-                </button>
-              ))}
-              <span className={`ml-2 text-[11px] font-semibold tabular-nums ${slides[index]?.theme === "lime" ? "text-ink" : "text-ivory/70"}`}>
-                {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              {[
-                { label: "Previous slide", dir: -1, glyph: "←" },
-                { label: "Next slide", dir: 1, glyph: "→" },
-              ].map((a) => (
-                <button
-                  key={a.label}
-                  type="button"
-                  aria-label={a.label}
-                  onClick={() => go(index + a.dir)}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border text-lg transition ${
-                    slides[index]?.theme === "lime"
-                      ? "border-ink/40 text-ink hover:bg-ink hover:text-gold"
-                      : "border-ivory/40 text-ivory hover:bg-ivory hover:text-ink"
-                  }`}
-                >
-                  {a.glyph}
-                </button>
-              ))}
-            </div>
+        <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-10">
+          <div className="flex items-center gap-2 sm:gap-3" role="tablist" aria-label="Choose slide">
+            {slides.map((b, i) => (
+              <button
+                key={b.id}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`Slide ${i + 1}: ${slideTitle(b)}`}
+                onClick={() => go(i)}
+                className="group py-2"
+              >
+                <span className={`block h-px transition-all duration-700 ${i === index ? "w-8 bg-ink sm:w-12" : "w-3 bg-ink/25 group-hover:bg-ink/50 sm:w-6"}`} />
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+            <span className="whitespace-nowrap tabular-nums">
+              {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+            </span>
+            <button type="button" onClick={() => go(index - 1)} aria-label="Previous slide" className="hover:text-ink">
+              ←
+            </button>
+            <button type="button" onClick={() => go(index + 1)} aria-label="Next slide" className="hover:text-ink">
+              →
+            </button>
           </div>
         </div>
       ) : null}

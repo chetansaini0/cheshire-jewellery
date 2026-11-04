@@ -11,7 +11,7 @@ export default function BannersPage() {
       <PageHeader
         eyebrow="Storefront content"
         title="Hero banners"
-        subtitle="Add, edit, reorder and toggle the homepage carousel (up to 5 active). Changes go live on the local storefront at localhost:3000 the next time the page loads."
+        subtitle="Add, edit, reorder and toggle the homepage carousel (up to 8 active). Changes go live on the local storefront at localhost:3000 the next time the page loads."
       />
       <BannerManager initial={banners} source={source} filePath={bannerFilePath()} storefrontUrl={process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"} />
     </div>

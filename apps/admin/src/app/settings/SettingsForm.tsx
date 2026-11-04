@@ -34,7 +34,7 @@ export function SettingsForm({ settings, dataDir }: { settings: StoreSettings; d
           {f("standardShippingFee", "Delivery charge (₹)", "number", "Charged on orders below the free-delivery amount.")}
           {f("gstPercent", "GST (%)", "number", "Apparel above ₹1,000 attracts 12% GST.")}
           <label className="flex items-center gap-2 self-end pb-2 text-sm">
-            <input type="checkbox" name="codEnabled" defaultChecked={settings.codEnabled} className="h-4 w-4 accent-[#0A0A0A]" /> Cash on delivery enabled
+            <input type="checkbox" name="codEnabled" defaultChecked={settings.codEnabled} className="h-4 w-4 accent-[#A6844A]" /> Cash on delivery enabled
           </label>
         </section>
         <section className="card grid gap-4 p-5 sm:grid-cols-2">
@@ -48,7 +48,7 @@ export function SettingsForm({ settings, dataDir }: { settings: StoreSettings; d
           Your changes are saved on this computer in <code className="break-all text-xs">{dataDir}</code>. They are not uploaded anywhere. Once a database is connected, the online admin will save too.
         </div>
         <div className="card p-4">
-          <button className="btn-lime w-full py-3" disabled={pending}>
+          <button className="btn-gold w-full py-3" disabled={pending}>
             {pending ? "Saving…" : "Save settings"}
           </button>
           <div className="mt-2">

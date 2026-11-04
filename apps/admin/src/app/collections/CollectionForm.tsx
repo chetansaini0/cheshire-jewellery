@@ -43,10 +43,10 @@ export function CollectionForm({ collection }: { collection?: AdminCollection })
           <input id="c-sort" name="sortOrder" type="number" min={1} defaultValue={collection?.sortOrder} className="input" />
         </div>
         <label className="flex items-end gap-2 pb-2 text-sm">
-          <input type="checkbox" name="featured" defaultChecked={collection?.featured} className="h-4 w-4 accent-[#0A0A0A]" /> Feature on homepage
+          <input type="checkbox" name="featured" defaultChecked={collection?.featured} className="h-4 w-4 accent-[#A6844A]" /> Feature on homepage
         </label>
       </div>
-      <button className="btn-lime w-full" disabled={pending}>
+      <button className="btn-gold w-full" disabled={pending}>
         {pending ? "Saving…" : collection ? "Save collection" : "Create collection"}
       </button>
       <SaveHint dirty={dirty} />

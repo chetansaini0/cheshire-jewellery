@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { Thumb } from "@/components/Thumb";
 import { saveProductAction, type FormState } from "@/lib/actions";
 import type { AdminProduct } from "@/lib/products";
+import { categoryGroup, categoryGroups } from "@cheshire/config";
 
 const PRESETS: Record<string, string[]> = {
   "XS–XXL": ["XS", "S", "M", "L", "XL", "XXL"],
@@ -126,17 +127,26 @@ export function ProductForm({
                 onChange={(e) => {
                   setCategory(e.target.value);
                   if (isNew && suggestedSku?.[e.target.value]) setSku(suggestedSku[e.target.value]);
-                  if (isNew && ["lehengas", "suits"].includes(e.target.value)) setSizes(PRESETS["S–XXL (ethnic)"]);
+                  if (isNew && ["lehengas", "suits", "kurtas"].includes(e.target.value)) setSizes(PRESETS["S–XXL (ethnic)"]);
                   if (isNew && e.target.value === "sarees") setSizes(PRESETS["Free Size (saree)"]);
                 }}
                 className={`input ${field("category")}`}
               >
-                {categories.map((c) => (
-                  <option key={c.slug} value={c.slug}>
-                    {c.name}
-                  </option>
+                {categoryGroups.map((g) => (
+                  <optgroup key={g.slug} label={g.name}>
+                    {categories
+                      .filter((c) => categoryGroup(c.slug) === g.slug)
+                      .map((c) => (
+                        <option key={c.slug} value={c.slug}>
+                          {c.name}
+                        </option>
+                      ))}
+                  </optgroup>
                 ))}
               </select>
+              <p className="mt-1 text-xs text-muted">
+                Group: <span className="font-semibold text-gold-deep">{categoryGroups.find((g) => g.slug === categoryGroup(category))?.name}</span>
+              </p>
               {errorText("category")}
             </div>
             <div>
@@ -264,7 +274,7 @@ export function ProductForm({
             {imageList.map((id, i) => (
               <div key={`${id}-${i}`} className="group relative">
                 <Thumb id={id} alt={`Image ${i + 1}`} className="h-36 w-28" w={300} />
-                {i === 0 ? <span className="absolute left-1 top-1 rounded bg-lime px-1.5 py-0.5 text-[9px] font-bold uppercase text-black">Cover</span> : null}
+                {i === 0 ? <span className="absolute left-1 top-1 rounded bg-gold px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Cover</span> : null}
                 <div className="absolute inset-x-1 bottom-1 hidden justify-between group-hover:flex">
                   <button type="button" onClick={() => moveImage(i, -1)} className="rounded bg-black/70 p-1 text-white" aria-label="Move left">
                     <Icon name="chevronLeft" className="h-3 w-3" />
@@ -327,7 +337,7 @@ export function ProductForm({
         <section className="card overflow-hidden">
           <div className="relative aspect-[3/4] bg-ink/5">
             {imageList[0] ? <Thumb id={imageList[0]} alt={name} className="h-full w-full !rounded-none" w={600} /> : null}
-            {discount ? <span className="absolute left-3 top-3 bg-lime px-2 py-1 text-[10px] font-bold uppercase text-black">-{discount}%</span> : null}
+            {discount ? <span className="absolute left-3 top-3 bg-gold px-2 py-1 text-[10px] font-bold uppercase text-white">-{discount}%</span> : null}
             {status === "draft" ? <span className="absolute right-3 top-3 bg-black px-2 py-1 text-[10px] font-bold uppercase text-white">Draft</span> : null}
           </div>
           <div className="p-4">
@@ -347,7 +357,7 @@ export function ProductForm({
             </p>
           ) : null}
           <SaveHint dirty={dirty} />
-          <button type="submit" className="btn-lime w-full py-3" disabled={pending}>
+          <button type="submit" className="btn-gold w-full py-3" disabled={pending}>
             {pending ? "Saving…" : isNew ? "Create product" : "Save changes"}
           </button>
           <Link href="/products" className="btn-ghost w-full">

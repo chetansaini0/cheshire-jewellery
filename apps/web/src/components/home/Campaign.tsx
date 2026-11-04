@@ -2,19 +2,37 @@ import Image from "next/image";
 import Link from "next/link";
 import { productImage } from "@cheshire/database/catalog";
 
+/** Editorial story block: fusion styling, two frames. */
 export function Campaign() {
   return (
-    <section className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
-      <div className="relative overflow-hidden rounded-3xl bg-gold text-ink">
-        <div className="grid items-center md:grid-cols-2">
-          <div className="p-8 md:p-14">
-            <p className="eyebrow">Denim Lab</p>
-            <h2 className="mt-3 font-serif text-6xl uppercase leading-[0.85] md:text-8xl">Baggy is back.</h2>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink/75">14oz rigid denim, cut wide and low. Built to fade into your story.</p>
-            <Link href="/shop/denim" className="mt-8 inline-block rounded-full bg-ink px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ivory transition hover:bg-ink/80">Shop denim</Link>
+    <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
+      <div className="grid items-center gap-10 md:grid-cols-12">
+        <div className="relative md:col-span-7">
+          <div className="grid grid-cols-5 gap-4">
+            <div className="relative col-span-3 aspect-[3/4] overflow-hidden rounded-md">
+              <Image src={productImage("px:38701448", 1100)} alt="Black saree styled on a city street" fill sizes="(max-width:768px) 60vw, 35vw" className="object-cover" />
+            </div>
+            <div className="relative col-span-2 mt-16 aspect-[3/4] overflow-hidden rounded-md">
+              <Image src={productImage("px:9474564", 800)} alt="Charcoal kurta with sunglasses" fill sizes="(max-width:768px) 40vw, 24vw" className="object-cover" />
+            </div>
           </div>
-          <div className="relative aspect-[4/5] md:aspect-auto md:h-full md:min-h-[520px]">
-            <Image src={productImage("photo-1541099649105-f69ad21f3246", 1200)} alt="Baggy denim" fill sizes="(max-width:768px) 100vw, 50vw" className="object-cover" />
+        </div>
+        <div className="md:col-span-5 md:pl-6">
+          <p className="eyebrow">Wear your world</p>
+          <h2 className="mt-4 font-serif text-5xl font-medium leading-[1] md:text-6xl">
+            Tradition, <span className="italic text-gold">worn your way.</span>
+          </h2>
+          <p className="mt-6 max-w-md text-[15px] leading-relaxed text-muted">
+            A georgette saree with sneakers. A chikankari kurta under a bomber. We design pieces that sit easily between your wardrobe&apos;s two
+            worlds, cut with care and finished by hand where it matters.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-6">
+            <Link href="/collections/roots-remixed" className="btn-primary">
+              Shop Roots Remixed
+            </Link>
+            <Link href="/about" className="link-arrow self-center">
+              Our story
+            </Link>
           </div>
         </div>
       </div>

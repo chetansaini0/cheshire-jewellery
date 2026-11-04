@@ -45,7 +45,7 @@ export function WebhookForm({
         <div className="space-y-1.5">
           {events.map((ev) => (
             <label key={ev.name} className="flex cursor-pointer items-start gap-2.5 rounded-md border border-line p-2.5 text-sm has-[:checked]:border-ink">
-              <input type="checkbox" name="events" value={ev.name} defaultChecked={webhook?.events.includes(ev.name)} className="mt-0.5 h-4 w-4 accent-[#0A0A0A]" />
+              <input type="checkbox" name="events" value={ev.name} defaultChecked={webhook?.events.includes(ev.name)} className="mt-0.5 h-4 w-4 accent-[#A6844A]" />
               <span>
                 <span className="font-medium">{ev.label}</span>
                 <span className="block text-xs text-muted">{ev.description}</span>
@@ -57,10 +57,10 @@ export function WebhookForm({
       </fieldset>
       {webhook ? (
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="enabled" defaultChecked={webhook.enabled} className="h-4 w-4 accent-[#0A0A0A]" /> Switched on
+          <input type="checkbox" name="enabled" defaultChecked={webhook.enabled} className="h-4 w-4 accent-[#A6844A]" /> Switched on
         </label>
       ) : null}
-      <button className="btn-lime w-full py-3" disabled={pending || disabled}>
+      <button className="btn-gold w-full py-3" disabled={pending || disabled}>
         {pending ? "Saving…" : webhook ? "Save webhook" : "Add webhook"}
       </button>
       <SaveHint dirty={dirty} />

@@ -8,7 +8,7 @@ export default function AboutPage() {
       <div className="mt-6">
         <BrandLogo variant="full" linked={false} />
       </div>
-      <h1 className="mt-8 font-serif text-5xl uppercase md:text-7xl">Made to be lived in.</h1>
+      <h1 className="mt-8 font-serif text-5xl md:text-7xl">Made to be lived in.</h1>
       <div className="divider-gold mt-4" />
       <p className="mt-6 text-lg leading-relaxed text-gold-deep">{brand.tagline}</p>
       <p className="mt-4 text-sm leading-relaxed text-muted">{brand.philosophy}</p>

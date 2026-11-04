@@ -1,18 +1,17 @@
 import { Hero } from "@/components/home/Hero";
-import { Marquee } from "@/components/home/Marquee";
 import { ShopByCategory } from "@/components/home/ShopByCategory";
 import { NewDrops } from "@/components/home/NewDrops";
 import { Bestsellers } from "@/components/home/Bestsellers";
 import { Lookbook } from "@/components/home/Lookbook";
 import { Campaign } from "@/components/home/Campaign";
 import { ClubSignup } from "@/components/home/ClubSignup";
-import { WhyCheshire } from "@/components/home/WhyCheshire";
-import { getBestsellers, getNewDrops } from "@/lib/catalog";
+import { getBestsellers, getNewIn, mixGroups } from "@/lib/catalog";
 import { readHeroBanners } from "@cheshire/config/banner-store";
+import { brand, seoDefaults } from "@cheshire/config";
 
 export default function HomePage() {
-  const newDrops = getNewDrops(8);
-  const bestsellers = getBestsellers(10);
+  const newIn = getNewIn(8);
+  const bestsellers = mixGroups(getBestsellers(12)).slice(0, 8);
   // Admin → Banners writes .data/hero-banners.json locally; Vercel builds use the committed defaults.
   const banners = readHeroBanners();
 
@@ -20,8 +19,9 @@ export default function HomePage() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "CHESHIRE",
-    url: "https://www.cheshire.com",
-    description: "CHESHIRE is a streetwear and clothing label: heavyweight tees, hoodies, outerwear, denim, dresses and co-ords.",
+    url: seoDefaults.siteUrl,
+    slogan: brand.tagline,
+    description: seoDefaults.description,
     brand: "CHESHIRE Clothing",
   };
 
@@ -29,19 +29,17 @@ export default function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Hero banners={banners} />
-      <div className="border-y border-ink bg-gold py-4 text-ink">
-        <Marquee
-          items={["Heavyweight tees", "Baggy denim", "Track sets", "Outerwear", "New drop Fridays", "Made in India"]}
-          className="font-serif text-3xl uppercase md:text-5xl"
-          separator="✺"
-        />
-      </div>
+      <section className="mx-auto max-w-3xl px-6 py-16 text-center lg:py-24">
+        <p className="eyebrow">{brand.secondaryTagline}</p>
+        <p className="mt-5 font-serif text-3xl font-medium leading-snug md:text-[2.6rem]">
+          Luxury without trying too hard. <span className="italic text-gold">Rooted in tradition, styled for now.</span>
+        </p>
+      </section>
+      <NewDrops products={newIn} />
       <ShopByCategory />
-      <NewDrops products={newDrops} />
+      <Campaign />
       <Bestsellers products={bestsellers} />
       <Lookbook />
-      <Campaign />
-      <WhyCheshire />
       <ClubSignup />
     </>
   );

@@ -95,9 +95,9 @@ export function CouponForm({ coupon, categories }: { coupon?: Coupon; categories
         </div>
       </fieldset>
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" name="active" defaultChecked={coupon?.active ?? true} className="h-4 w-4 accent-[#0A0A0A]" /> Code is switched on
+        <input type="checkbox" name="active" defaultChecked={coupon?.active ?? true} className="h-4 w-4 accent-[#A6844A]" /> Code is switched on
       </label>
-      <button className="btn-lime w-full" disabled={pending}>
+      <button className="btn-gold w-full" disabled={pending}>
         {pending ? "Saving…" : coupon ? "Save coupon" : "Create coupon"}
       </button>
       <SaveHint dirty={dirty} />

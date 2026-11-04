@@ -41,9 +41,9 @@ export default async function CouponsPage({ searchParams }: { searchParams: Prom
                 const st = couponState(c);
                 const pct = c.usageLimit ? Math.min(100, (c.used / c.usageLimit) * 100) : 0;
                 return (
-                  <tr key={c.code} className={`hover:bg-ink/[0.03] ${edit === c.code ? "bg-lime/10" : ""}`}>
+                  <tr key={c.code} className={`hover:bg-ink/[0.03] ${edit === c.code ? "bg-gold-soft" : ""}`}>
                     <td className="td">
-                      <code className="rounded bg-ink px-2 py-1 font-mono text-xs font-bold text-lime">{c.code}</code>
+                      <code className="rounded bg-ink px-2 py-1 font-mono text-xs font-bold text-gold">{c.code}</code>
                       <div className="mt-1 text-xs text-muted">{c.description}</div>
                     </td>
                     <td className="td font-semibold">{c.type === "percent" ? `${c.value}% off` : c.type === "flat" ? `${inr(c.value)} off` : "Free shipping"}</td>

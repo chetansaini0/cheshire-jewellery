@@ -77,7 +77,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                     <div className="text-muted">{c.state}</div>
                   </td>
                   <td className="td">
-                    <Pill tone={c.segment === "VIP" ? "lime" : c.segment === "Repeat" ? "blue" : "gray"}>{c.segment}</Pill>
+                    <Pill tone={c.segment === "VIP" ? "gold" : c.segment === "Repeat" ? "blue" : "gray"}>{c.segment}</Pill>
                   </td>
                   <td className="td text-xs">{categoryName(c.favouriteCategory)}</td>
                   <td className="td text-right tabular-nums">{c.orders}</td>

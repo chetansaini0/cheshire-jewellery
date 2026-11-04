@@ -1,0 +1,11 @@
+/* CHESHIRE design tokens as CSS variables (mirrors packages/ui/tokens.json). Imported by both apps. */
+:root {
+  --ch-ivory: #f7f5f0;
+  --ch-ink: #111111;
+  --ch-gold: #a6844a;
+  --ch-gold-soft: #efe7d8;
+  --ch-gold-deep: #7d6235;
+  --ch-muted: #6b6560;
+  --ch-card: #ffffff;
+  --ch-line: #e8e4dd;
+}

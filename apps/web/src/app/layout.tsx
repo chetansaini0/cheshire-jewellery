@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { AnalyticsScripts } from "@/lib/analytics";
-import { seoDefaults } from "@cheshire/config";
+import { brand, seoDefaults } from "@cheshire/config";
 
-const display = Anton({ weight: "400", subsets: ["latin"], variable: "--font-display", display: "swap" });
-const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const serif = Cormorant_Garamond({
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+});
+const sans = Manrope({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-sans", display: "swap" });
+
+export const viewport = { themeColor: "#F7F5F0" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || seoDefaults.siteUrl),
@@ -17,12 +25,9 @@ export const metadata: Metadata = {
   description: seoDefaults.description,
   keywords: [...seoDefaults.keywords],
   icons: {
-    icon: [
-      { url: "/brand/cheshire-mark.png", type: "image/png", sizes: "512x512" },
-      { url: "/icon.png", type: "image/png" },
-    ],
+    icon: [{ url: "/icon.png", type: "image/png", sizes: "512x512" }],
     apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
-    shortcut: ["/brand/cheshire-mark.png"],
+    shortcut: ["/icon.png"],
   },
   openGraph: {
     type: "website",
@@ -35,7 +40,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "CHESHIRE — Wear The Moment",
+        alt: `CHESHIRE — ${brand.tagline}`,
       },
     ],
   },
@@ -56,7 +61,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
       <body className="bg-ivory text-ink antialiased">
         <SiteShell>{children}</SiteShell>
         <AnalyticsScripts />

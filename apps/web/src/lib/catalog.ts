@@ -1,11 +1,13 @@
 import type { Product, ProductFilters, Paginated, Mood, Occasion, ProductLabel } from "@cheshire/types";
 import {
   calcDiscount,
+  productGender,
   productImage,
   seedProducts,
   categories as seedCategories,
 } from "@cheshire/database/catalog";
 import { publicCommerceFields } from "@cheshire/commerce";
+import { categoryGroup } from "@cheshire/config";
 
 const LABEL_FROM_COPY: Record<string, ProductLabel> = {
   Exclusive: "EXCLUSIVE",
@@ -42,6 +44,8 @@ export function mapSeedToProduct(p: (typeof seedProducts)[number], index: number
     mrp: p.mrp,
     discountPercent: calcDiscount(p.price, p.mrp),
     category: p.category as Product["category"],
+    gender: productGender(p),
+    group: categoryGroup(p.category),
     collection: p.collection ?? null,
     material: p.material,
     color: p.color,
@@ -182,6 +186,43 @@ function extractUnderPrice(q: string): number {
   return match ? Number(match[1]) : Number.MAX_SAFE_INTEGER;
 }
 
+/**
+ * Interleave ethnic, casual and accessories so grids feel mixed rather than blocked by category.
+ * Keeps the relative order inside each group.
+ */
+export function mixGroups(items: Product[]): Product[] {
+  const buckets = { ethnic: [] as Product[], casual: [] as Product[], accessories: [] as Product[] };
+  for (const p of items) buckets[p.group ?? "casual"].push(p);
+  const out: Product[] = [];
+  const pattern: Array<keyof typeof buckets> = ["ethnic", "casual", "casual", "ethnic", "accessories", "casual"];
+  let i = 0;
+  while (out.length < items.length) {
+    const b = buckets[pattern[i % pattern.length]];
+    if (b.length) out.push(b.shift()!);
+    else {
+      const next = (Object.values(buckets) as Product[][]).find((x) => x.length);
+      if (next) out.push(next.shift()!);
+    }
+    i++;
+  }
+  return out;
+}
+
+export type Audience = "women" | "men";
+
+/** Products for /women or /men (unisex pieces appear on both). */
+export function getByAudience(audience: Audience): Product[] {
+  // Pieces made for this audience lead; unisex staples follow so the grid reads clearly as "hers"/"his".
+  return [...mixGroups(catalog.filter((p) => p.gender === audience)), ...mixGroups(catalog.filter((p) => p.gender === "unisex"))];
+}
+
+/** Newest arrivals, mixed across ethnic and casual. */
+export function getNewIn(limit?: number): Product[] {
+  const fresh = [...catalog].sort((a, b) => Number(b.isNew) - Number(a.isNew) || +new Date(b.createdAt) - +new Date(a.createdAt));
+  const mixed = mixGroups(fresh);
+  return limit ? mixed.slice(0, limit) : mixed;
+}
+
 export function getNewDrops(limit = 8): Product[] {
   return getProducts({ sort: "newest", pageSize: limit }).data;
 }
@@ -203,9 +244,11 @@ export function getComplementary(product: Product, limit = 4): Product[] {
     dresses: ["outerwear", "accessories"],
     "co-ords": ["accessories", "tees"],
     accessories: ["tees", "hoodies"],
-    lehengas: ["sarees", "suits"],
-    sarees: ["lehengas", "suits"],
-    suits: ["sarees", "lehengas"],
+    lehengas: ["sarees", "suits", "accessories"],
+    sarees: ["outerwear", "accessories", "lehengas"],
+    suits: ["kurtas", "accessories", "sarees"],
+    kurtas: ["sweatshirts", "denim", "accessories"],
+    sweatshirts: ["kurtas", "denim", "tees"],
   };
   const targets = complementMap[product.category] ?? ["tees"];
   return catalog

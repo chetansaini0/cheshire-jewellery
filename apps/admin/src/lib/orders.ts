@@ -240,11 +240,11 @@ export function updateOrderStatus(id: string, status: OrderStatus, note?: string
   return { ok: true as const };
 }
 
-export const statusTone: Record<OrderStatus, "gray" | "blue" | "amber" | "lime" | "green" | "red"> = {
+export const statusTone: Record<OrderStatus, "gray" | "blue" | "amber" | "gold" | "green" | "red"> = {
   placed: "gray",
   confirmed: "blue",
   packed: "amber",
-  shipped: "lime",
+  shipped: "gold",
   delivered: "green",
   cancelled: "red",
   returned: "red",

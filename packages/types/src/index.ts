@@ -156,7 +156,15 @@ export type CategorySlug =
   | "accessories"
   | "lehengas"
   | "sarees"
-  | "suits";
+  | "suits"
+  | "kurtas"
+  | "sweatshirts";
+
+/** Who a product is merchandised for. Unisex pieces appear on both /women and /men. */
+export type Gender = "women" | "men" | "unisex";
+
+/** Top-level grouping used by nav, admin and filters. */
+export type CategoryGroupSlug = "ethnic" | "casual" | "accessories";
 
 export interface Money {
   amount: number;
@@ -197,6 +205,8 @@ export interface Product {
   mrp: number;
   discountPercent: number;
   category: CategorySlug;
+  gender?: Gender;
+  group?: CategoryGroupSlug;
   collection?: string | null;
   material: string;
   color: string;

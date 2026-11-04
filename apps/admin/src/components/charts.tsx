@@ -24,8 +24,8 @@ export function TrendChart({
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Revenue trend">
       <defs>
         <linearGradient id="trendFill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#D7FF3A" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#D7FF3A" stopOpacity="0" />
+          <stop offset="0%" stopColor="#A6844A" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#A6844A" stopOpacity="0" />
         </linearGradient>
       </defs>
       {ticks.map((t) => (
@@ -66,7 +66,7 @@ export function TrendChart({
   );
 }
 
-const PALETTE = ["rgb(var(--ink))", "#D7FF3A", "#8B5CF6", "#F97316", "#0EA5E9", "#E11D48", "#10B981", "#A3A3A3", "#FACC15", "#64748B"];
+const PALETTE = ["rgb(var(--ink))", "#A6844A", "#8B5CF6", "#F97316", "#0EA5E9", "#E11D48", "#10B981", "#A3A3A3", "#FACC15", "#64748B"];
 
 export function Donut({
   data,
@@ -144,7 +144,7 @@ export function BarList({ rows }: { rows: Array<{ label: string; value: number; 
             <span className="tabular-nums text-muted">{r.display}</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-ink/5">
-            <div className={`h-full rounded-full ${r.highlight ? "bg-lime" : "bg-ink"}`} style={{ width: `${(r.value / max) * 100}%` }} />
+            <div className={`h-full rounded-full ${r.highlight ? "bg-gold" : "bg-ink"}`} style={{ width: `${(r.value / max) * 100}%` }} />
           </div>
         </li>
       ))}

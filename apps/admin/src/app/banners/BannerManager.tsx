@@ -8,7 +8,7 @@ import { Thumb } from "@/components/Thumb";
 import { Pill } from "@/components/ui";
 import { resetBannersAction, saveBannersAction } from "@/lib/actions";
 
-const MAX_ACTIVE = 5;
+import { MAX_ACTIVE_BANNERS as MAX_ACTIVE } from "@cheshire/config";
 
 const blank = (n: number): HeroBanner => ({
   id: `banner-${n}`,
@@ -24,35 +24,46 @@ const blank = (n: number): HeroBanner => ({
 });
 
 function Preview({ b, compact = false }: { b: HeroBanner; compact?: boolean }) {
-  const lime = b.theme === "lime";
+  if (b.image) {
+    // Finished artwork: shown whole at 3:2, exactly as the storefront renders it.
+    return (
+      <div className="relative aspect-[3/2] overflow-hidden rounded-md border border-line bg-[#F7F5F0]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={b.image} alt={`${b.headline} ${b.accent}`} loading="lazy" className="h-full w-full object-contain" />
+      </div>
+    );
+  }
+  // Mirrors the storefront hero: editorial copy on the left, photography on the right.
+  const dark = b.theme === "dark";
   return (
-    <div className={`relative isolate overflow-hidden ${compact ? "aspect-[16/7]" : "aspect-[16/8]"} ${lime ? "bg-lime text-[#0A0A0A]" : "bg-[#0A0A0A] text-[#F4F3EF]"}`}>
-      <div className={`absolute inset-0 -z-10 grid ${b.imageIds.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
+    <div
+      className={`grid overflow-hidden rounded-md border border-line ${compact ? "aspect-[16/7]" : "aspect-[16/8]"} grid-cols-[5fr_7fr] ${
+        dark ? "bg-[#111111] text-[#F7F5F0]" : "bg-[#F7F5F0] text-[#111111]"
+      }`}
+    >
+      <div className={`flex min-w-0 flex-col justify-center ${compact ? "p-3" : "p-6 sm:p-8"}`}>
+        <span className={`font-semibold uppercase tracking-[0.22em] text-gold ${compact ? "text-[7px]" : "text-[10px]"}`}>{b.eyebrow}</span>
+        <p className={`mt-2 font-serif leading-[0.95] ${compact ? "text-lg" : "text-4xl sm:text-5xl"}`}>
+          {b.headline}
+          <br />
+          <span className="italic text-gold">{b.accent}</span>
+        </p>
+        {!compact ? (
+          <>
+            <p className={`mt-3 max-w-xs text-sm ${dark ? "text-white/70" : "text-[#6B6560]"}`}>{b.supporting}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className={`rounded-sm px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] ${dark ? "bg-[#F7F5F0] text-[#111111]" : "bg-[#111111] text-[#F7F5F0]"}`}>{b.cta.label}</span>
+              {b.secondaryCta?.label ? (
+                <span className="border-b border-current px-1 py-2 text-[10px] font-semibold uppercase tracking-[0.16em]">{b.secondaryCta.label}</span>
+              ) : null}
+            </div>
+          </>
+        ) : null}
+      </div>
+      <div className={`relative grid ${b.imageIds.length > 1 ? "grid-cols-[2fr_1fr]" : "grid-cols-1"} gap-px`}>
         {b.imageIds.map((id, k) => (
           <Thumb key={`${id}-${k}`} id={id} alt="" className="h-full w-full !rounded-none" w={compact ? 400 : 900} />
         ))}
-      </div>
-      <div className={`absolute inset-0 -z-10 ${lime ? "bg-gradient-to-t from-lime via-lime/40 to-transparent" : "bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-[#0A0A0A]/10"}`} />
-      <div className={`flex h-full flex-col justify-end ${compact ? "p-3" : "p-6"}`}>
-        <span className={`w-fit px-2 py-0.5 font-bold uppercase tracking-[0.2em] ${compact ? "text-[7px]" : "text-[10px]"} ${lime ? "bg-[#0A0A0A] text-lime" : "bg-lime text-[#0A0A0A]"}`}>
-          {b.eyebrow}
-        </span>
-        <p className={`mt-2 font-display uppercase leading-[0.85] ${compact ? "text-2xl" : "text-5xl sm:text-6xl"}`}>
-          {b.headline}
-          <br />
-          <span style={{ color: "transparent", WebkitTextStroke: `${compact ? 1 : 2}px ${lime ? "#0A0A0A" : "#D7FF3A"}` }}>{b.accent}</span>
-        </p>
-        {!compact ? (
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
-            <p className={`max-w-sm text-sm ${lime ? "text-black/75" : "text-white/75"}`}>{b.supporting}</p>
-            <div className="flex gap-2">
-              <span className={`rounded-full px-5 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] ${lime ? "bg-[#0A0A0A] text-[#F4F3EF]" : "bg-[#F4F3EF] text-[#0A0A0A]"}`}>{b.cta.label}</span>
-              {b.secondaryCta?.label ? (
-                <span className={`rounded-full border px-5 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] ${lime ? "border-black/50" : "border-lime text-lime"}`}>{b.secondaryCta.label}</span>
-              ) : null}
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );
@@ -164,7 +175,7 @@ export function BannerManager({
   return (
     <div>
       <div className="card mb-6 flex flex-wrap items-center gap-3 p-4 text-sm">
-        <Pill tone={src === "file" ? "lime" : "gray"}>{src === "file" ? "Your saved banners" : "Original banners"}</Pill>
+        <Pill tone={src === "file" ? "gold" : "gray"}>{src === "file" ? "Your saved banners" : "Original banners"}</Pill>
         <span className="text-muted" title={filePath}>
           {src === "file"
             ? "The store on this computer shows these banners. The live (Vercel) site keeps the original set until a database is connected."
@@ -182,7 +193,7 @@ export function BannerManager({
           <a href={storefrontUrl} target="_blank" rel="noreferrer" className="btn-ghost">
             <Icon name="external" /> Storefront
           </a>
-          <button id="banner-save" type="button" className="btn-lime" onClick={save} disabled={!dirty || pending} title="Ctrl + S">
+          <button id="banner-save" type="button" className="btn-gold" onClick={save} disabled={!dirty || pending} title="Ctrl + S">
             {pending ? "Saving…" : dirty ? "Save & publish" : "Saved"}
           </button>
         </span>
@@ -216,12 +227,12 @@ export function BannerManager({
                 <button
                   type="button"
                   onClick={() => toggle(b.id)}
-                  className={`relative h-6 w-11 rounded-full transition ${b.isActive ? "bg-lime" : "bg-ink/20"}`}
+                  className={`relative h-6 w-11 rounded-full transition ${b.isActive ? "bg-gold" : "bg-ink/20"}`}
                   role="switch"
                   aria-checked={b.isActive}
                   aria-label={`${b.isActive ? "Hide" : "Show"} ${b.eyebrow}`}
                 >
-                  <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-[#0A0A0A] transition-all ${b.isActive ? "left-[22px]" : "left-0.5"}`} />
+                  <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${b.isActive ? "left-[22px]" : "left-0.5"}`} />
                 </button>
               </div>
             </div>
@@ -258,7 +269,7 @@ export function BannerManager({
                 <input id="b-headline" className="input" value={current.headline} maxLength={40} onChange={(e) => update({ headline: e.target.value })} />
               </div>
               <div>
-                <label className="label" htmlFor="b-accent">Accent line (outlined)</label>
+                <label className="label" htmlFor="b-accent">Accent line (gold italic)</label>
                 <input id="b-accent" className="input" value={current.accent} maxLength={40} onChange={(e) => update({ accent: e.target.value })} />
               </div>
               <div className="sm:col-span-2">
@@ -292,7 +303,20 @@ export function BannerManager({
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="label" htmlFor="b-images">Images (1–2): Unsplash photo-… or Pexels px:&lt;id&gt;, one per line</label>
+                <label className="label" htmlFor="b-image">Full banner image (text already on it)</label>
+                <input
+                  id="b-image"
+                  className="input font-mono text-xs"
+                  placeholder="/banners/banner-01-wear-the-mix.webp"
+                  value={current.image ?? ""}
+                  onChange={(e) => update({ image: e.target.value.trim() || undefined })}
+                />
+                <p className="mt-1 text-xs text-muted">
+                  Put the file in <code>apps/web/public/banners</code> (and <code>apps/admin/public/banners</code> for this preview). The whole image links to the primary link above. Leave empty to use photos + text instead.
+                </p>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label" htmlFor="b-images">Photos for a text banner (1–2): Unsplash photo-… or Pexels px:&lt;id&gt;, one per line</label>
                 <textarea
                   id="b-images"
                   className="input font-mono text-xs"
@@ -300,19 +324,19 @@ export function BannerManager({
                   value={current.imageIds.join("\n")}
                   onChange={(e) => {
                     const ids = e.target.value.split(/[\n,]/).map((s) => s.trim()).filter(Boolean).slice(0, 2);
-                    update({ imageIds: (ids.length ? ids : [""]) as HeroBanner["imageIds"] });
+                    update({ imageIds: ids });
                   }}
                 />
               </div>
               <div>
                 <span className="label">Theme</span>
                 <div className="grid grid-cols-2 gap-2">
-                  {(["dark", "lime"] as const).map((t) => (
+                  {(["light", "dark"] as const).map((t) => (
                     <button
                       key={t}
                       type="button"
                       onClick={() => update({ theme: t })}
-                      className={`rounded-md border px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] ${current.theme === t ? "border-ink ring-2 ring-ink" : "border-line"} ${t === "lime" ? "bg-lime text-black" : "bg-[#0A0A0A] text-white"}`}
+                      className={`rounded-md border px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] ${current.theme === t ? "border-gold ring-2 ring-gold/40" : "border-line"} ${t === "light" ? "bg-[#F7F5F0] text-[#111111]" : "bg-[#111111] text-white"}`}
                     >
                       {t}
                     </button>

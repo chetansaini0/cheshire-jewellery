@@ -61,7 +61,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
       <GettingStarted items={checklist} />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
-        <Kpi label="Revenue" value={compactInr(d.kpis.revenue)} delta={d.kpis.revenueDelta} hint={`vs prev ${days}d`} tag={<DemoTag />} tone="lime" />
+        <Kpi label="Revenue" value={compactInr(d.kpis.revenue)} delta={d.kpis.revenueDelta} hint={`vs prev ${days}d`} tag={<DemoTag />} tone="gold" />
         <Kpi label="Orders" value={num(d.kpis.orders)} delta={d.kpis.ordersDelta} hint={`${d.kpis.toFulfil} to fulfil`} tag={<DemoTag />} href="/orders" />
         <Kpi label="Avg order value" value={inr(d.kpis.aov)} delta={d.kpis.aovDelta} hint="excl. cancelled" tag={<DemoTag />} />
         <Kpi
@@ -101,7 +101,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
           title="Recent orders"
           tag={<DemoTag />}
           action={
-            <Link href="/orders" className="text-xs font-semibold uppercase tracking-[0.12em] text-lime-ink hover:underline">
+            <Link href="/orders" className="text-xs font-semibold uppercase tracking-[0.12em] text-gold-deep hover:underline">
               All orders →
             </Link>
           }
@@ -151,7 +151,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
           title="Low-stock alerts"
           tag={<LiveTag />}
           action={
-            <Link href="/inventory?filter=low" className="text-xs font-semibold uppercase tracking-[0.12em] text-lime-ink hover:underline">
+            <Link href="/inventory?filter=low" className="text-xs font-semibold uppercase tracking-[0.12em] text-gold-deep hover:underline">
               Inventory →
             </Link>
           }
@@ -203,7 +203,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
             }))}
           />
           <p className="mt-4 flex items-center gap-2 text-xs text-muted">
-            <span className="h-2 w-4 rounded-full bg-lime" /> Festive Edit categories (lehengas, sarees, suits)
+            <span className="h-2 w-4 rounded-full bg-gold" /> Festive Edit categories (lehengas, sarees, suits)
           </p>
         </Panel>
       </div>
@@ -216,7 +216,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
           { href: "/coupons", label: "Create a coupon", icon: "percent" as const },
         ].map((a) => (
           <Link key={a.href} href={a.href} className="card flex items-center gap-3 p-4 text-sm font-semibold uppercase tracking-[0.1em] hover:border-ink">
-            <span className="grid h-9 w-9 place-items-center rounded-md bg-lime text-[#0A0A0A]">
+            <span className="grid h-9 w-9 place-items-center rounded-md bg-gold text-white">
               <Icon name={a.icon} />
             </span>
             {a.label}

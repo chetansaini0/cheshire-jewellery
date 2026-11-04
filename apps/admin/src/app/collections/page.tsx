@@ -34,7 +34,7 @@ export default async function CollectionsPage({ searchParams }: { searchParams: 
                 <div className="p-4">
                   <div className="flex items-center gap-2">
                     <h2 className="font-display text-xl uppercase tracking-wide">{c.name}</h2>
-                    {c.featured ? <Pill tone="lime">featured</Pill> : null}
+                    {c.featured ? <Pill tone="gold">featured</Pill> : null}
                     {c.origin === "admin" ? <Pill tone="blue">new</Pill> : null}
                   </div>
                   <p className="mt-1 line-clamp-2 text-sm text-muted">{c.description || "—"}</p>
@@ -46,7 +46,7 @@ export default async function CollectionsPage({ searchParams }: { searchParams: 
                       <Link href={`/products?q=${encodeURIComponent(c.slug)}`} className="font-semibold hover:underline">
                         Products
                       </Link>
-                      <Link href={`/collections?edit=${c.slug}`} className="font-semibold text-lime-ink hover:underline">
+                      <Link href={`/collections?edit=${c.slug}`} className="font-semibold text-gold-deep hover:underline">
                         Edit
                       </Link>
                     </span>

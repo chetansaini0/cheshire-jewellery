@@ -26,7 +26,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
         </div>
         <div className="flex items-center gap-3">
           <div className="h-1.5 w-32 overflow-hidden rounded-full bg-ink/10" aria-hidden>
-            <div className="h-full bg-lime-ink" style={{ width: `${(done / items.length) * 100}%` }} />
+            <div className="h-full bg-gold" style={{ width: `${(done / items.length) * 100}%` }} />
           </div>
           <button
             type="button"
@@ -46,7 +46,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
             <Link href={item.href} className="flex h-full items-start gap-3 px-5 py-4 transition hover:bg-ink/[0.03]">
               <span
                 className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-semibold ${
-                  item.done ? "bg-lime text-[#0A0A0A]" : "border border-line text-muted"
+                  item.done ? "bg-gold text-white" : "border border-line text-muted"
                 }`}
                 aria-label={item.done ? "Done" : `Step ${i + 1}`}
               >

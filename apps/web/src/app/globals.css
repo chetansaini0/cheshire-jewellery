@@ -1,13 +1,16 @@
+@import "../../../../packages/ui/src/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Palette, fonts and radii come from the shared preset (packages/ui/theme.cjs). */
 :root {
-  --ivory: #f4f3ef;
-  --gold: #d7ff3a;
-  --ink: #0a0a0a;
-  --muted: #6b6b6b;
-  --line: #e4e4e0;
+  --ivory: var(--ch-ivory);
+  --gold: var(--ch-gold);
+  --ink: var(--ch-ink);
+  --muted: var(--ch-muted);
+  --line: var(--ch-line);
 }
 
 * {
@@ -23,7 +26,7 @@ body {
 }
 
 ::selection {
-  background: var(--gold);
+  background: var(--ch-gold-soft);
   color: var(--ink);
 }
 
@@ -37,16 +40,24 @@ img {
   height: auto;
 }
 
+/*
+ * Headings: Cormorant Garamond in sentence case. Older markup still carries `uppercase` from the
+ * streetwear theme; editorial serif headings stay in natural case regardless.
+ */
 .font-serif {
-  font-family: var(--font-display), Impact, sans-serif;
-  font-weight: 400;
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
   letter-spacing: -0.01em;
 }
+.font-serif.uppercase {
+  text-transform: none;
+}
 
-.text-stroke {
-  color: transparent;
-  -webkit-text-stroke: 2px currentColor;
-  -webkit-text-stroke-color: var(--gold);
+/* Accent line in headings (was an outline stroke): champagne italic. */
+.text-stroke,
+.text-stroke-ink {
+  color: var(--gold);
+  font-style: italic;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -71,35 +82,30 @@ img {
 
 @layer components {
   .btn-primary {
-    @apply inline-block rounded-full bg-gold px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition hover:bg-ivory;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-ink px-7 py-3.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ivory transition duration-300 hover:bg-charcoal;
   }
 
   .btn-gold {
-    @apply inline-block rounded-full bg-gold px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition hover:bg-ink hover:text-ivory;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-gold px-7 py-3.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition duration-300 hover:bg-gold-deep;
   }
 
   .btn-outline-gold {
-    @apply inline-block rounded-full border border-current px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] transition hover:bg-ivory hover:text-ink;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-current px-7 py-3.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition duration-300 hover:bg-ink hover:text-ivory;
   }
 
   .divider-gold {
-    @apply h-1 w-12 bg-gold;
+    @apply h-px w-12 bg-gold;
   }
 
   .section-title {
-    @apply font-serif text-5xl uppercase leading-[0.9] md:text-7xl;
+    @apply font-serif text-4xl font-medium leading-[1.05] md:text-6xl;
   }
 
   .eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-muted;
+    @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-gold;
   }
 
   .link-arrow {
-    @apply shrink-0 border-b border-current pb-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] after:ml-1 after:content-['→'];
+    @apply shrink-0 border-b border-current pb-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition hover:text-gold after:ml-1 after:content-['→'];
   }
-}
-
-.text-stroke-ink {
-  color: transparent;
-  -webkit-text-stroke: 2px var(--ink);
 }
