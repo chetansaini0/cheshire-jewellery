@@ -1,6 +1,6 @@
 # CHESHIRE
 
-Contemporary aesthetic jewellery commerce ecosystem.
+Contemporary aesthetic clothing & streetwear commerce ecosystem.
 
 **Brand line:** Luxury without trying too hard.
 
@@ -73,7 +73,7 @@ npm install
 npx expo start
 ```
 
-Bundle ID: `com.cheshire.jewellery`
+Bundle ID: `com.cheshire.clothing`
 
 Deep links / App Links are configured in `app.json` for `/products/*`.
 
@@ -144,7 +144,7 @@ Mixed bags are split automatically at checkout.
 
 ## Supplier integrations
 
-Reusable connectors live in `packages/integrations`. Cheshire does **not** hardcode jewellery houses.
+Reusable connectors live in `packages/integrations`. Cheshire does **not** hardcode clothing houses or brands.
 
 - Mock hub: sandbox catalog, stock, orders, tracking
 - Manual / CSV: houses with no API
